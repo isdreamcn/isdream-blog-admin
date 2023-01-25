@@ -6,7 +6,7 @@ import type {
 import service from '@/service'
 
 enum Api {
-  Login = '/api/user/login',
+  Login = '/api/user/admin/login',
   Signin = '/api/user/signin',
   Logout = '/api/user/logout',
   Menu = '/api/user/menu',
@@ -48,6 +48,7 @@ export const getUserMenu = () => {
 
 // 用户按钮权限
 export const getUserPermissions = () => {
+  return Promise.resolve({ data: [] })
   return service.request<Service.Result<string[]>>({
     url: Api.Permissions,
     method: 'GET'
