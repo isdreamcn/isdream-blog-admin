@@ -6,7 +6,7 @@ import { RoutesHandler } from '../utils'
 const loadRoutes = loadFiles<RouteRecordRaw>
 
 export const routesHandler = new RoutesHandler(
-  loadRoutes(import.meta.glob('./main/*.ts', { eager: true })),
+  loadRoutes(import.meta.glob('./admin/*.ts', { eager: true })),
   appConfig.routesHandlerOptions
 )
 
