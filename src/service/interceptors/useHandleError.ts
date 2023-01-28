@@ -22,7 +22,8 @@ interface FailHandler {
 const failCodeMap = new Map<HttpStatusCode, FailHandler>([
   [HttpStatusCode.Unauthorized, { handler: failAuth }],
   [HttpStatusCode.Forbidden, { handler: failAuth }],
-  [HttpStatusCode.Not_Found, {}]
+  [HttpStatusCode.Bad_Request, {}],
+  [HttpStatusCode.Internal_Server_Error, {}]
 ])
 
 const handleError = (code: number, message?: string) => {

@@ -61,7 +61,7 @@ const config: Readonly<AppConfig> = {
   },
   // router
   defaultRouteMeta: {
-    keepAlive: true,
+    keepAlive: false,
     hiddenInMenu: false,
     hiddenInBread: false,
     needLoading: false,
