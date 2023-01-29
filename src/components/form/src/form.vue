@@ -65,7 +65,7 @@
               :name="props.cancelIcon || 'icon-refreshLeft'"
               v-if="props.cancelIcon || !props.cancelText"
             />
-            {{ props.cancelText || '取消' }}
+            {{ props.cancelText || '重置' }}
           </el-button>
           <el-button type="primary" @click="submit" :loading="props.loading">
             <MIcon
@@ -105,9 +105,11 @@ const { formRules } = useFormRules(props)
 
 // actions
 const elFormRef = ref<FormInstance>()
+let oldFormValue = JSON.stringify(formData.value)
 const submit = () => {
   elFormRef.value?.validate((isValid, invalidFields) => {
-    if (isValid) {
+    if (isValid && oldFormValue !== JSON.stringify(formData.value)) {
+      oldFormValue = JSON.stringify(formData.value)
       emit('submit', cloneDeep(formData.value))
     } else if (invalidFields) {
       // 滚动到验证错误的字段
@@ -119,7 +121,10 @@ const submit = () => {
 
 const cancel = () => {
   elFormRef.value?.resetFields()
-  emit('cancel', cloneDeep(formData.value))
+  if (oldFormValue !== JSON.stringify(formData.value)) {
+    oldFormValue = JSON.stringify(formData.value)
+    emit('cancel', cloneDeep(formData.value))
+  }
 }
 
 onMounted(() => {

@@ -1,7 +1,6 @@
 <template>
   <div>
-    <MForm :fields="fields" :label-width="0" @submit="search" @cancel="search">
-    </MForm>
+    <MForm :fields="fields" @submit="search" @cancel="search"> </MForm>
     <MTable
       :columns="columns"
       :http="getUserList"

@@ -11,7 +11,7 @@ import { buildProps, definePropType, isObject } from '@/utils'
 
 export interface FormFieldAttrsOptions {
   label: string
-  value: string | number
+  value: string | number | boolean
   disabled?: boolean
 }
 

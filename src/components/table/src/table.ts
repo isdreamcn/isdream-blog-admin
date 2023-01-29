@@ -9,7 +9,7 @@ interface TablePropsColumn {
   width?: number
   fixed?: 'left' | 'right'
   attrs?: Record<string, any>
-  customRender?: (value: any, row: Record<string, any>, index: number) => void
+  customRender?: (value: any, row: Record<string, any>, index: number) => string
 }
 
 interface PaginationOptions {

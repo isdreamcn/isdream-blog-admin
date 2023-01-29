@@ -1,8 +1,8 @@
 <template>
-  <el-select v-model="value">
+  <el-select v-model="value" @clear="clear">
     <el-option
       v-for="item in options"
-      :key="item.value"
+      :key="item.label"
       :label="item.label"
       :value="item.value"
       :disabled="item.disabled"
@@ -29,6 +29,10 @@ const value = computed({
     emit('update:modelValue', val)
   }
 })
+
+const clear = () => {
+  emit('update:modelValue', undefined)
+}
 </script>
 
 <style lang="scss" scoped></style>
