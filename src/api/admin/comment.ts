@@ -28,3 +28,5 @@ export const CommentDel = (id: number) => {
     method: 'DELETE'
   })
 }
+
+export * from './types/comment.type'

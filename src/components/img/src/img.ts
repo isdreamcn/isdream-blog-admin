@@ -4,8 +4,7 @@ import { buildProps } from '@/utils'
 
 export const imgProps = buildProps({
   src: {
-    type: String,
-    required: false
+    type: String
   },
   // 缩略图
   thumb: {

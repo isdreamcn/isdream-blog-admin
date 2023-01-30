@@ -1,4 +1,4 @@
-export { ElInput, ElSelect, ElDatePicker } from 'element-plus'
-export { MIcon } from '@/components'
+export { ElInput } from 'element-plus'
+export { MIcon, MUpload } from '@/components'
 
-export type GlobalComponents = 'ElInput' | 'MIcon'
+export type GlobalComponents = 'ElInput' | 'MIcon' | 'MUpload'

@@ -15,7 +15,11 @@
       @getForm="getForm"
       @submit="submit"
       @cancel="cancel"
-    ></MForm>
+    >
+      <template #buttons>
+        <slot name="buttons"></slot>
+      </template>
+    </MForm>
   </el-dialog>
 </template>
 

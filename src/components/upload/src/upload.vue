@@ -41,6 +41,7 @@ import { uploadProps, uploadEmits } from './upload'
 import { ref, watch, computed, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { api as viewerApi } from 'v-viewer'
+import { appConfig } from '@/config'
 import { useProgressFake } from './hooks'
 
 defineOptions({
@@ -178,8 +179,8 @@ const httpRequest: UploadProps['httpRequest'] = (
   return props
     .http(formdata)
     .then((res) => {
-      fileListItem.name = res.data.name
-      fileListItem.url = res.data.url
+      fileListItem.name = res.filename
+      fileListItem.url = appConfig.baseUrlFile + res.url
       fileListItem.status = 'success'
       fileListItem.response = res
       onChange()

@@ -22,7 +22,7 @@ export interface FormPropsField {
   // show !== false 则显示
   show?: boolean
   slot?: boolean
-  attrs?: Record<string, any> & { options?: FormFieldAttrsOptions[] }
+  attrs?: { options?: FormFieldAttrsOptions[]; [key: string]: any }
   on?: Record<string, (...payload: any[]) => void>
   colAttrs?: number | ColProps
   placeholder?: string

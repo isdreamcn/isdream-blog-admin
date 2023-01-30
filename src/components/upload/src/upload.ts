@@ -9,10 +9,8 @@ import { buildProps, definePropType, isArray } from '@/utils'
 export type UploadUserFile = ElUploadUserFile
 
 export type UploadHttp = (formData: FormData) => Promise<{
-  data: {
-    url: string
-    name: string
-  }
+  url: string
+  filename: string
 }>
 
 export type UploadOnPreview = (file: UploadFile) => void
