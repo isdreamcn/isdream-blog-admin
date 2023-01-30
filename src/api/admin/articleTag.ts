@@ -1,3 +1,5 @@
+import type { ArticleTag, ArticleTagData } from './types/articleTag.type'
+import type { CommonListParams } from '../commonTypes'
 import service from '@/service'
 
 enum Api {
@@ -8,15 +10,15 @@ enum Api {
   Edit = '/api/article_tag'
 }
 
-export const getArticleTagList = (params?: any) => {
-  return service.request<Service.ResultPagination>({
+export const getArticleTagList = (params?: CommonListParams) => {
+  return service.request<Service.ResultPagination<ArticleTag[]>>({
     url: Api.List,
     method: 'GET',
     params
   })
 }
 
-export const articleTagAdd = (data: any) => {
+export const articleTagAdd = (data: ArticleTagData) => {
   return service.request({
     url: Api.Add,
     method: 'POST',
@@ -33,17 +35,19 @@ export const articleTagDel = (id: number) => {
 
 export const articleTagDetails = (id: number) => {
   return service
-    .request({
+    .request<Service.Result<ArticleTag>>({
       url: `${Api.Details}/${id}`,
       method: 'GET'
     })
     .then((res) => res.data)
 }
 
-export const articleTagEdit = (id: number, data: any) => {
+export const articleTagEdit = (id: number, data: ArticleTagData) => {
   return service.request({
     url: `${Api.Edit}/${id}`,
     method: 'PUT',
     data
   })
 }
+
+export * from './types/articleTag.type'
