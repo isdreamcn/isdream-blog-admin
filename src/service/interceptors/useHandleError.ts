@@ -23,7 +23,8 @@ const failCodeMap = new Map<HttpStatusCode, FailHandler>([
   [HttpStatusCode.Unauthorized, { handler: failAuth }],
   [HttpStatusCode.Forbidden, { handler: failAuth }],
   [HttpStatusCode.Bad_Request, {}],
-  [HttpStatusCode.Internal_Server_Error, {}]
+  [HttpStatusCode.Internal_Server_Error, {}],
+  [HttpStatusCode.Unprocessable_Entity, {}]
 ])
 
 const handleError = (code: number, message?: string) => {

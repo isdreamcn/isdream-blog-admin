@@ -2,8 +2,8 @@ import type Table from './table.vue'
 import type { ExtractPropTypes } from 'vue'
 import { buildProps, definePropType, isArray } from '@/utils'
 
-interface TablePropsColumn {
-  key: string
+interface TablePropsColumn<T = string> {
+  key: T
   label?: string
   slot?: boolean
   width?: number
@@ -79,7 +79,7 @@ export const tableEmits = {
 export type TableProps = ExtractPropTypes<typeof tableProps>
 export type TableEmits = typeof tableEmits
 
-export type TableColumns = TableProps['columns']
+export type TableColumns<T = string> = TablePropsColumn<T>[]
 export type TablePaginationConfig = TableProps['paginationConfig']
 
 export type TableInstance = InstanceType<typeof Table>

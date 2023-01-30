@@ -34,7 +34,7 @@
         <el-col v-if="props.inline" v-bind="defaultColAttrs">
           <slot name="buttons">
             <el-button-group>
-              <el-button @click="cancel">
+              <el-button @click="reset">
                 <MIcon
                   :name="props.cancelIcon || 'icon-refreshLeft'"
                   v-if="props.cancelIcon || !props.cancelText"
@@ -65,7 +65,7 @@
               :name="props.cancelIcon || 'icon-refreshLeft'"
               v-if="props.cancelIcon || !props.cancelText"
             />
-            {{ props.cancelText || '重置' }}
+            {{ props.cancelText || '取消' }}
           </el-button>
           <el-button type="primary" @click="submit" :loading="props.loading">
             <MIcon
@@ -120,6 +120,11 @@ const submit = () => {
 }
 
 const cancel = () => {
+  elFormRef.value?.resetFields()
+  emit('cancel', cloneDeep(formData.value))
+}
+
+const reset = () => {
   elFormRef.value?.resetFields()
   if (oldFormValue !== JSON.stringify(formData.value)) {
     oldFormValue = JSON.stringify(formData.value)

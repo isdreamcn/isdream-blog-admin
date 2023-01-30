@@ -5,7 +5,8 @@ import {
   useHandleUrl,
   useSetupToken,
   useHandleError,
-  useLoading
+  useLoading,
+  useNullRemove
 } from './interceptors'
 import { mergeInterceptors } from './utils'
 
@@ -17,6 +18,7 @@ export const service = new BasicRequest({
   interceptors: mergeInterceptors([
     useHandleUrl(config.useMock),
     useSetupToken(config.serviceTokenConfig),
+    useNullRemove(),
     useLoading(),
     useHandleError()
   ])
