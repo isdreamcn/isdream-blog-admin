@@ -34,7 +34,7 @@
         <el-col v-if="props.inline" v-bind="defaultColAttrs">
           <slot name="buttons">
             <el-button-group>
-              <el-button @click="reset">
+              <el-button @click="cancel">
                 <MIcon
                   :name="props.cancelIcon || 'icon-refreshLeft'"
                   v-if="props.cancelIcon || !props.cancelText"
@@ -105,11 +105,25 @@ const { formRules } = useFormRules(props)
 
 // actions
 const elFormRef = ref<FormInstance>()
-let oldFormValue = JSON.stringify(formData.value)
+
+// 防抖
+let oldFormValue = ''
+const canEmit = (data: any) => {
+  if (!props.debounce) {
+    return true
+  }
+  const str = JSON.stringify(data)
+  if (str !== oldFormValue) {
+    oldFormValue = str
+    return true
+  }
+
+  return false
+}
+
 const submit = () => {
   elFormRef.value?.validate((isValid, invalidFields) => {
-    if (isValid && oldFormValue !== JSON.stringify(formData.value)) {
-      oldFormValue = JSON.stringify(formData.value)
+    if (isValid && canEmit(formData.value)) {
       emit('submit', cloneDeep(formData.value))
     } else if (invalidFields) {
       // 滚动到验证错误的字段
@@ -121,13 +135,7 @@ const submit = () => {
 
 const cancel = () => {
   elFormRef.value?.resetFields()
-  emit('cancel', cloneDeep(formData.value))
-}
-
-const reset = () => {
-  elFormRef.value?.resetFields()
-  if (oldFormValue !== JSON.stringify(formData.value)) {
-    oldFormValue = JSON.stringify(formData.value)
+  if (canEmit(formData.value)) {
     emit('cancel', cloneDeep(formData.value))
   }
 }

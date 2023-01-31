@@ -11,6 +11,7 @@
       :inline="false"
       :col-attrs="24"
       :loading="loading"
+      :debounce="false"
       v-bind="$attrs"
       @getForm="getForm"
       @submit="submit"

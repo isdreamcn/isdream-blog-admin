@@ -53,6 +53,11 @@ export const formProps = buildProps({
     type: Boolean,
     default: false
   },
+  // 防抖
+  debounce: {
+    type: Boolean,
+    default: true
+  },
   submitText: String,
   cancelText: String,
   submitIcon: String,
