@@ -1,4 +1,12 @@
-export { ElInput } from 'element-plus'
-export { MIcon, MUpload, MColorPicker } from '@/components'
+export { ElInput, ElSwitch, ElTreeSelect } from 'element-plus'
+export { MIcon, MUpload, MColorPicker, MMarkdown, MEditor } from '@/components'
 
-export type GlobalComponents = 'ElInput' | 'MIcon' | 'MUpload' | 'MColorPicker'
+export type GlobalComponents =
+  | 'ElInput'
+  | 'ElSwitch'
+  | 'ElTreeSelect'
+  | 'MIcon'
+  | 'MUpload'
+  | 'MColorPicker'
+  | 'MMarkdown'
+  | 'MEditor'

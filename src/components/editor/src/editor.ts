@@ -2,6 +2,7 @@ import type Editor from './editor.vue'
 import type { ExtractPropTypes } from 'vue'
 import type { RawEditorSettings } from 'tinymce'
 import { buildProps, definePropType } from '@/utils'
+import { upload } from '@/api/common'
 import { toolbar, plugins } from './tinymce/tinymce'
 
 export type EditorUpload = (formData: FormData) => Promise<{
@@ -33,17 +34,11 @@ export const editorProps = buildProps({
   },
   height: {
     type: definePropType<string | number>([Number, String]),
-    required: false,
     default: 400
-  },
-  width: {
-    type: definePropType<string | number>([Number, String]),
-    required: false,
-    default: 'auto'
   },
   upload: {
     type: definePropType<EditorUpload | false>([Function, Boolean]),
-    default: false
+    default: () => upload
   },
   uploadFileKey: {
     type: String,

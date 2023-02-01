@@ -102,6 +102,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .m-markdown {
+  width: 100%;
   margin-top: 20px;
 }
 </style>

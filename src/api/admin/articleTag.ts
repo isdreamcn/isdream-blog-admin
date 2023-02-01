@@ -3,11 +3,20 @@ import type { CommonListParams } from '../commonTypes'
 import service from '@/service'
 
 enum Api {
+  Select = '/api/article_tag/select',
   List = '/api/article_tag',
   Del = '/api/article_tag',
   Add = '/api/article_tag',
   Details = '/api/article_tag',
   Edit = '/api/article_tag'
+}
+
+export const getArticleTagSelect = (params?: CommonListParams) => {
+  return service.request<Service.ResultPagination<ArticleTag[]>>({
+    url: Api.Select,
+    method: 'GET',
+    params
+  })
 }
 
 export const getArticleTagList = (params?: CommonListParams) => {

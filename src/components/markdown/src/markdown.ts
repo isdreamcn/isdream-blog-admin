@@ -2,12 +2,13 @@ import type Markdown from './markdown.vue'
 import type { ExtractPropTypes } from 'vue'
 import type Vditor from 'vditor'
 import { buildProps, definePropType } from '@/utils'
+import { upload } from '@/api/common'
 import { toolbar } from './vditor/vditor'
 
 export type MarkdownUpload = (formData: FormData) => Promise<{
   data: {
     url: string
-    name: string
+    filename: string
   }
 }>
 
@@ -30,7 +31,7 @@ export const markdownProps = buildProps({
   },
   upload: {
     type: definePropType<MarkdownUpload | false>([Function, Boolean]),
-    default: false
+    default: () => upload
   },
   uploadFileKey: {
     type: String,

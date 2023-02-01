@@ -1,7 +1,7 @@
 import type { RequestInterceptors } from '../types'
 
 const removeNull = (data?: Record<string, any>) => {
-  if (!data) {
+  if (!data || Object.prototype.toString.call(data) === '[object FormData]') {
     return data
   }
 

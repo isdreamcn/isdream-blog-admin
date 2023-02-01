@@ -4,7 +4,6 @@
       :multiple="props.multiple"
       :accept="props.accept"
       :list-type="props.listType"
-      :disabled="disabled"
       v-bind="$attrs"
       :file-list="fileList"
       :on-preview="onPreview"
@@ -34,9 +33,10 @@ import type {
   UploadProps,
   UploadRequestOptions,
   UploadRawFile,
-  UploadFile
+  UploadFile,
+  UploadUserFile as ElUploadUserFile
 } from 'element-plus'
-import type { UploadUserFile, UploadRule } from './upload'
+import type { UploadRule } from './upload'
 import { uploadProps, uploadEmits } from './upload'
 import { ref, watch, computed, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -52,15 +52,22 @@ defineOptions({
 const props = defineProps(uploadProps)
 const emit = defineEmits(uploadEmits)
 
-const fileList = ref<UploadUserFile[]>([...props.modelValue])
+const fileList = ref<ElUploadUserFile[]>([])
 
 watch(
   () => props.modelValue,
-  (val, prev) => {
-    if (val === prev) {
-      return
+  () => {
+    if (props.modelValue.find((v) => !v.uid)) {
+      fileList.value = props.modelValue.map((item) => ({
+        name: item.filename,
+        url: appConfig.baseUrlFile + item.url,
+        status: 'success',
+        response: item
+      }))
     }
-    fileList.value = props.modelValue
+  },
+  {
+    immediate: true
   }
 )
 
@@ -150,7 +157,7 @@ const httpRequest: UploadProps['httpRequest'] = (
 ) => {
   const { file } = options
   // 当前文件信息
-  const fileListItem = reactive<UploadUserFile>({
+  const fileListItem = reactive<ElUploadUserFile>({
     name: file.name,
     url: URL.createObjectURL(file),
     status: 'uploading',
@@ -179,8 +186,8 @@ const httpRequest: UploadProps['httpRequest'] = (
   return props
     .http(formdata)
     .then((res) => {
-      fileListItem.name = res.filename
-      fileListItem.url = appConfig.baseUrlFile + res.url
+      fileListItem.name = res.data.filename
+      fileListItem.url = appConfig.baseUrlFile + res.data.url
       fileListItem.status = 'success'
       fileListItem.response = res
       onChange()

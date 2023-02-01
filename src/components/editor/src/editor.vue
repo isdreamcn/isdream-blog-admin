@@ -1,5 +1,5 @@
 <template>
-  <div class="m-editor" :style="{ width: containerWidth }">
+  <div class="m-editor">
     <textarea ref="elRef" :id="tinymceId" :key="tinymceId"></textarea>
   </div>
 </template>
@@ -35,7 +35,7 @@ const editorRef = ref<Editor>()
 const elRef = ref<HTMLElement>()
 
 const { options: imgUploadOptions } = useTinymceImgUpload(props)
-const { tinymceOptions, tinymceId, containerWidth } = useTinymceOptions(
+const { tinymceOptions, tinymceId } = useTinymceOptions(
   props,
   {
     ...imgUploadOptions
@@ -138,4 +138,8 @@ function bindModelHandlers(editor: Editor) {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.m-editor {
+  width: 100%;
+}
+</style>

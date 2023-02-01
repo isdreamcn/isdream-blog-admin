@@ -26,6 +26,17 @@ export default {
         sort: 2
       },
       component: () => import('@/views/admin/article/list/list.vue')
+    },
+    {
+      path: 'edit/:id',
+      name: 'ArticleEdit',
+      meta: {
+        title: '编辑',
+        icon: 'icon-edit',
+        hiddenInMenu: true,
+        keepAlive: false
+      },
+      component: () => import('@/views/admin/article/edit/edit.vue')
     }
   ]
 } as RouteRecordRaw

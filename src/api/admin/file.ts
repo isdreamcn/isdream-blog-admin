@@ -4,7 +4,6 @@ import service from '@/service'
 
 enum Api {
   List = '/api/file',
-  Upload = '/api/file/upload',
   Del = '/api/file'
 }
 
@@ -14,19 +13,6 @@ export const getFileList = (params?: CommonListParams) => {
     method: 'GET',
     params
   })
-}
-
-export const upload = (data: FormData) => {
-  return service
-    .request({
-      url: Api.Upload,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      data
-    })
-    .then((res) => res.data)
 }
 
 export const fileDel = (id: number) => {

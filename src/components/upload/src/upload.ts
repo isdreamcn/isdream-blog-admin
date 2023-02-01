@@ -5,13 +5,17 @@ import type {
   UploadFile
 } from 'element-plus'
 import { buildProps, definePropType, isArray } from '@/utils'
+import { upload } from '@/api/common'
 
-export type UploadUserFile = ElUploadUserFile
-
-export type UploadHttp = (formData: FormData) => Promise<{
+export type UploadUserFile = {
   url: string
   filename: string
-}>
+  [key: string]: any
+}
+
+export type UploadHttp = (
+  formData: FormData
+) => Promise<{ data: UploadUserFile }>
 
 export type UploadOnPreview = (file: UploadFile) => void
 
@@ -63,7 +67,7 @@ export const uploadProps = buildProps({
   },
   http: {
     type: definePropType<UploadHttp>(Function),
-    required: true
+    default: upload
   },
   httpFileKey: {
     type: String,
@@ -82,8 +86,8 @@ export const uploadProps = buildProps({
 } as const)
 
 export const uploadEmits = {
-  'update:modelValue': (fileList: UploadUserFile[]) => isArray(fileList),
-  change: (fileList: UploadUserFile[]) => isArray(fileList)
+  'update:modelValue': (fileList: ElUploadUserFile[]) => isArray(fileList),
+  change: (fileList: ElUploadUserFile[]) => isArray(fileList)
 }
 
 export type UploadProps = ExtractPropTypes<typeof uploadProps>

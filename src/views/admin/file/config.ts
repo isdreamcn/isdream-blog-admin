@@ -1,5 +1,5 @@
 import type { TableColumns, FormFields } from '@/components'
-import { upload, File } from '@/api/admin/file'
+import { File } from '@/api/admin/file'
 
 export const fields: FormFields = [
   {
@@ -42,8 +42,6 @@ export const dialogFields: FormFields = [
     label: '附件',
     tag: 'MUpload',
     attrs: {
-      http: upload,
-      httpFileKey: 'file',
       listType: 'picture-card'
     },
     on: {}

@@ -1,5 +1,5 @@
 <template>
-  <div class="m-view-file">
+  <div v-if="props.src" class="m-view-file">
     <img
       v-if="props.mimeType?.indexOf('image') !== -1"
       v-viewer
@@ -22,7 +22,7 @@ defineOptions({
 const props = defineProps(viewFileProps)
 
 const filePath = computed(() => {
-  if (/^https?:\/\//.test(props.src)) {
+  if (!props.src || /^https?:\/\//.test(props.src)) {
     return props.src
   }
   return appConfig.baseUrlFile + props.src

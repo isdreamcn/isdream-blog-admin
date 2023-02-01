@@ -4,12 +4,11 @@ import { buildProps } from '@/utils'
 
 export const viewFileProps = buildProps({
   src: {
-    type: String,
-    required: true
+    type: String
   },
   mimeType: {
     type: String,
-    required: true
+    default: 'image/png'
   }
 } as const)
 

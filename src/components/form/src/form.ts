@@ -15,9 +15,9 @@ export interface FormFieldAttrsOptions {
   disabled?: boolean
 }
 
-export interface FormPropsField {
+export interface FormPropsField<T = string> {
   tag: GlobalComponents | FormComponents | Component
-  key: string
+  key: T
   label?: string
   // show !== false 则显示
   show?: boolean
@@ -74,6 +74,6 @@ export const formEmits = {
 export type FormProps = ExtractPropTypes<typeof formProps>
 export type FormEmits = typeof formEmits
 
-export type FormFields = FormProps['fields']
+export type FormFields<T = string> = FormPropsField<T>[]
 
 export type FormInstance = InstanceType<typeof Form>

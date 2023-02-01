@@ -18,7 +18,7 @@ export const useVditorUpload = (
           return props
             .upload(formData)
             .then((res) => {
-              change(res.data.url, res.data.name)
+              change(res.data.url, res.data.filename)
               return '上传成功'
             })
             .catch(() => {
