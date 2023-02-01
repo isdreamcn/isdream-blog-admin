@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { appConfig } from '@/config'
+import { joinBaseUrlFile } from '@/utils'
 import { viewFileProps } from './viewFile'
 
 defineOptions({
@@ -25,7 +25,7 @@ const filePath = computed(() => {
   if (!props.src || /^https?:\/\//.test(props.src)) {
     return props.src
   }
-  return appConfig.baseUrlFile + props.src
+  return joinBaseUrlFile(props.src)
 })
 </script>
 

@@ -6,6 +6,7 @@
 import { markdownViewProps } from './markdownView'
 import Vditor from 'vditor'
 import { ref, watch, onMounted } from 'vue'
+import { setBaseUrlFile } from '@/utils'
 import { useVditorTheme } from './hooks'
 
 defineOptions({
@@ -22,7 +23,7 @@ const init = () => {
   if (!vditorViewRef.value) {
     return
   }
-  Vditor.preview(vditorViewRef.value, props.value, {
+  Vditor.preview(vditorViewRef.value, setBaseUrlFile(props.value), {
     mode: vditorTheme.content.value,
     theme: {
       // 设置内容主题

@@ -24,6 +24,7 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { removeBaseUrlFile } from '@/utils'
 import { getArticleTagSelect } from '@/api/admin/articleTag'
 import { articleAdd, articleEdit, articleDetails } from '@/api/admin/article'
 import { fields } from './config'
@@ -72,6 +73,7 @@ const goback = () => {
 const loading = ref(false)
 const submit = (data: any) => {
   data.cover = data.cover?.[0]?.response?.id
+  data.content = removeBaseUrlFile(data.content)
   let request: Promise<any> | null = null
 
   loading.value = true

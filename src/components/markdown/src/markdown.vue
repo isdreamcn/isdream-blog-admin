@@ -6,10 +6,13 @@
 
 <script setup lang="ts">
 //TODO https://b3log.org/vditor/
+import '~/public/vditor/ant'
+import '~/public/vditor/zh_CN'
 import { markdownProps, markdownEmits } from './markdown'
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import Vditor from 'vditor'
 import { uniqueId } from 'lodash-unified'
+import { setBaseUrlFile } from '@/utils'
 import 'vditor/dist/index.css'
 import { useVditorTheme, useVditorUpload } from './hooks'
 
@@ -25,30 +28,33 @@ const vditor = ref<Vditor>()
 const { vditorTheme } = useVditorTheme(vditor)
 
 // value
-const vditorValue = ref(props.modelValue)
+const vditorValue = ref(setBaseUrlFile(props.modelValue))
 // 上传图片
 const { vditorUploadOptions } = useVditorUpload(props, (imgUrl, filename) => {
   vditorValue.value += `![${filename}](${imgUrl})`
 })
 
 watch(
-  () => vditorValue.value,
+  () => props.modelValue,
   (val) => {
-    if (vditor.value) {
-      vditor.value.setValue(val)
+    if (val === vditorValue.value) {
+      return
     }
-    emit('update:modelValue', val)
-    emit('change', val)
+
+    if (vditor.value) {
+      vditor.value.setValue(setBaseUrlFile(val))
+    }
+  },
+  {
+    immediate: true
   }
 )
 
 watch(
-  () => props.modelValue,
-  (val, prev) => {
-    if (val === prev) {
-      return
-    }
-    vditorValue.value = val
+  () => vditorValue.value,
+  (val) => {
+    emit('update:modelValue', val)
+    emit('change', val)
   }
 )
 
@@ -57,6 +63,7 @@ const init = () => {
     // 设置外观主题
     theme: vditorTheme.theme.value,
     lang: 'zh_CN',
+    i18n: window.VditorI18n,
     mode: 'ir',
     toolbar: props.toolbar,
     preview: {

@@ -18,7 +18,8 @@ import {
   onDeactivated,
   onBeforeUnmount
 } from 'vue'
-import { bindHandlers, setValue } from './tinymce/helper'
+import { setBaseUrlFile } from '@/utils'
+import { bindHandlers } from './tinymce/helper'
 import { useTinymceOptions, useTinymceImgUpload } from './hooks'
 import './tinymce/resource'
 
@@ -113,7 +114,7 @@ function initSetup(e: Record<string, any>) {
     return
   }
 
-  editor.setContent(props.modelValue)
+  editor.setContent(setBaseUrlFile(props.modelValue))
   // 光标放在最后
   editor.selection.select(editor.getBody(), true)
   editor.selection.collapse(false)
@@ -125,8 +126,11 @@ function initSetup(e: Record<string, any>) {
 function bindModelHandlers(editor: Editor) {
   watch(
     () => props.modelValue,
-    (val: string, prevVal: string) => {
-      setValue(editor, val, prevVal)
+    (val, prevVal) => {
+      if (val === prevVal || val === editor.getContent()) {
+        return
+      }
+      editor.setContent(setBaseUrlFile(val))
     }
   )
 

@@ -41,7 +41,7 @@ import { uploadProps, uploadEmits } from './upload'
 import { ref, watch, computed, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { api as viewerApi } from 'v-viewer'
-import { appConfig } from '@/config'
+import { joinBaseUrlFile } from '@/utils'
 import { useProgressFake } from './hooks'
 
 defineOptions({
@@ -60,7 +60,7 @@ watch(
     if (props.modelValue.find((v) => !v.uid)) {
       fileList.value = props.modelValue.map((item) => ({
         name: item.filename,
-        url: appConfig.baseUrlFile + item.url,
+        url: joinBaseUrlFile(item.url),
         status: 'success',
         response: item
       }))
@@ -187,7 +187,7 @@ const httpRequest: UploadProps['httpRequest'] = (
     .http(formdata)
     .then((res) => {
       fileListItem.name = res.data.filename
-      fileListItem.url = appConfig.baseUrlFile + res.data.url
+      fileListItem.url = joinBaseUrlFile(res.data.url)
       fileListItem.status = 'success'
       fileListItem.response = res
       onChange()

@@ -1,4 +1,5 @@
 import type { MarkdownProps } from '../markdown'
+import { joinBaseUrlFile } from '@/utils'
 
 export const useVditorUpload = (
   props: MarkdownProps,
@@ -18,7 +19,8 @@ export const useVditorUpload = (
           return props
             .upload(formData)
             .then((res) => {
-              change(res.data.url, res.data.filename)
+              const { url, filename } = res.data
+              change(joinBaseUrlFile(url), filename)
               return '上传成功'
             })
             .catch(() => {
