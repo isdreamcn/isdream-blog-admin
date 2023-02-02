@@ -5,6 +5,7 @@
         v-show="!showThumb"
         :src="props.src"
         v-bind="$attrs"
+        @mousedown="(e) => e.preventDefault()"
         @load="onLoad"
         @error="onError"
       />
@@ -14,6 +15,7 @@
         class="ground-glass"
         :src="props.thumb"
         v-bind="$attrs"
+        @mousedown="(e) => e.preventDefault()"
         @error="onThumbError"
       />
     </template>

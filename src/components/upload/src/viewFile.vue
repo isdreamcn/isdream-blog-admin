@@ -5,6 +5,7 @@
       v-viewer
       :src="filePath"
       :alt="props.src"
+      @mousedown="(e) => e.preventDefault()"
     />
     <a v-else :href="filePath" target="_blank">{{ props.src }}</a>
   </div>

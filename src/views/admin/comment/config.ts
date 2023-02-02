@@ -28,17 +28,17 @@ export const fields: FormFields = [
 
 export const columns: TableColumns = [
   {
-    key: 'approved',
-    label: '审核状态',
-    slot: true
-  },
-  {
     key: 'content',
     label: '留言内容'
   },
   {
     key: 'createdAt',
     label: '留言日期',
+    slot: true
+  },
+  {
+    key: 'approved',
+    label: '审核状态',
     slot: true
   },
   {

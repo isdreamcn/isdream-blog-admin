@@ -95,10 +95,4 @@ const del = (id: number) => {
 }
 </script>
 
-<style lang="scss" scoped>
-.m-img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-}
-</style>
+<style lang="scss" scoped></style>

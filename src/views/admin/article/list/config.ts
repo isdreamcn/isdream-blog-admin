@@ -32,6 +32,11 @@ export const columns: TableColumns = [
     label: '评论量'
   },
   {
+    key: 'createdAt',
+    label: '创建日期',
+    slot: true
+  },
+  {
     key: 'isCommented',
     label: '允许评论',
     slot: true
@@ -39,11 +44,6 @@ export const columns: TableColumns = [
   {
     key: 'isTop',
     label: '置顶',
-    slot: true
-  },
-  {
-    key: 'createdAt',
-    label: '创建日期',
     slot: true
   },
   {

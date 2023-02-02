@@ -1,10 +1,12 @@
 <template>
   <MImg
-    v-if="showImg && props.src"
+    v-if="props.src"
+    v-show="showImg"
     :src="props.src"
     @error="errorHandler"
+    @load="loadHandler"
   ></MImg>
-  <div v-else class="m-img">
+  <div v-show="!showImg" class="m-img">
     <svg width="100%" height="100%">
       <circle cx="50%" cy="50%" r="50%" :fill="hashColor(props.username)" />
       <text
@@ -31,16 +33,19 @@ defineOptions({
 
 const props = defineProps(imgAvatarProps)
 
-const showImg = ref(true)
+const showImg = ref(false)
 const errorHandler = () => {
   showImg.value = false
+}
+const loadHandler = () => {
+  showImg.value = true
 }
 
 watch(
   () => props.src,
   debounce((val) => {
     if (val) {
-      showImg.value = true
+      showImg.value = false
     }
   }, 500)
 )
@@ -50,7 +55,8 @@ watch(
 .m-img {
   position: relative;
   overflow: hidden;
-  width: 100%;
-  height: 100%;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 </style>
