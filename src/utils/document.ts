@@ -1,3 +1,4 @@
 export const setDocumentTitle = (title?: string) => {
-  document.title = [title, import.meta.env.VITE_APP_TITLE].join(' | ')
+  const VITE_APP_TITLE = import.meta.env.VITE_APP_TITLE
+  document.title = title ? `${title} | ${VITE_APP_TITLE}` : VITE_APP_TITLE
 }
