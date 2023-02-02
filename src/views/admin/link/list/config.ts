@@ -21,7 +21,7 @@ export const fields = reactive<FormFields>([
 export const columns: TableColumns = [
   {
     key: 'icon',
-    label: '图标',
+    label: '头像',
     slot: true
   },
   {
@@ -77,12 +77,12 @@ export const dialogFields = reactive<FormFields<keyof LinkData>>([
   },
   {
     key: 'icon',
-    label: '图标',
+    label: '头像',
     tag: 'ElInput',
     validateRules: [
       {
         required: true,
-        message: '请输入图标地址',
+        message: '请输入头像地址',
         trigger: 'change'
       }
     ]
