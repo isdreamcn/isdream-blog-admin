@@ -12,7 +12,7 @@ enum Api {
 }
 
 export const getArticleTagSelect = (params?: CommonListParams) => {
-  return service.request<Service.ResultPagination<ArticleTag[]>>({
+  return service.request<Service.Result<ArticleTag[]>>({
     url: Api.Select,
     method: 'GET',
     params
