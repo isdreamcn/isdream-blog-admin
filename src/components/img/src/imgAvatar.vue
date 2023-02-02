@@ -1,13 +1,13 @@
 <template>
-  <MImg
-    v-if="props.src"
-    v-show="showImg"
-    :src="props.src"
-    @error="errorHandler"
-    @load="loadHandler"
-  ></MImg>
-  <div v-show="!showImg" class="m-img">
-    <svg width="100%" height="100%">
+  <div class="m-img-avatar">
+    <MImg
+      v-if="props.src"
+      v-show="showImg"
+      :src="props.src"
+      @error="errorHandler"
+      @load="loadHandler"
+    ></MImg>
+    <svg v-show="!showImg" width="100%" height="100%">
       <circle cx="50%" cy="50%" r="50%" :fill="hashColor(props.username)" />
       <text
         x="50%"
@@ -52,9 +52,10 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.m-img {
+.m-img-avatar {
   position: relative;
   overflow: hidden;
+  user-select: none;
   width: 50px;
   height: 50px;
   border-radius: 50%;
