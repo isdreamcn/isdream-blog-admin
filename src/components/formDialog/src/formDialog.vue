@@ -57,7 +57,7 @@ const init = () => {
       formData.value = props.getHandler({ ...value, ...res })
     })
   } else {
-    formData.value = props.getHandler(value)
+    formData.value = value
   }
 }
 
