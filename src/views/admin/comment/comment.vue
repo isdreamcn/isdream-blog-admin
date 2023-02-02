@@ -45,7 +45,7 @@ import { columns, fields } from './config'
 import { getCommentList, CommentApprove, CommentDel } from '@/api/admin/comment'
 
 defineOptions({
-  name: 'Test'
+  name: 'Comment'
 })
 
 // 搜索

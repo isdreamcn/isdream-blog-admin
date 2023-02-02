@@ -57,7 +57,7 @@ import {
 } from '@/api/admin/articleTag'
 
 defineOptions({
-  name: 'Test'
+  name: 'ArticleTag'
 })
 
 // 搜索

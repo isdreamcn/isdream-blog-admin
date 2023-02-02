@@ -30,7 +30,7 @@ import { articleAdd, articleEdit, articleDetails } from '@/api/admin/article'
 import { fields } from './config'
 
 defineOptions({
-  name: 'Demo'
+  name: 'ArticleEdit'
 })
 
 getArticleTagSelect().then((res) => {

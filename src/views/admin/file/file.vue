@@ -49,7 +49,7 @@ import { columns, fields, dialogFields } from './config'
 import { getFileList, fileDel } from '@/api/admin/file'
 
 defineOptions({
-  name: 'Test'
+  name: 'File'
 })
 
 // 搜索
