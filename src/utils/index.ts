@@ -6,6 +6,7 @@ export * from './objects'
 export * from './types'
 export * from './methods'
 export * from './format'
+export * from './document'
 
 export { hasOwn } from '@vue/shared'
 export { cloneDeep, clone } from 'lodash-unified'
