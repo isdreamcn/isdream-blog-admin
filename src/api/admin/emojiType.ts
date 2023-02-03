@@ -13,8 +13,8 @@ enum Api {
 
 export const getEmojiTypeSelect = () => {
   return service.request<Service.ResultPagination<EmojiType[]>>({
-    url: Api.List,
-    method: 'Select'
+    url: Api.Select,
+    method: 'GET'
   })
 }
 

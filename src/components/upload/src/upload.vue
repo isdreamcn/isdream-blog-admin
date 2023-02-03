@@ -189,7 +189,7 @@ const httpRequest: UploadProps['httpRequest'] = (
       fileListItem.name = res.data.filename
       fileListItem.url = joinBaseUrlFile(res.data.url)
       fileListItem.status = 'success'
-      fileListItem.response = res
+      fileListItem.response = res.data
       onChange()
       if (props.showMessage) {
         ElMessage.success('上传成功')
