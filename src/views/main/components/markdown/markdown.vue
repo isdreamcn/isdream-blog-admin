@@ -26,7 +26,7 @@ const upload: MarkdownUpload = (formData: FormData) => {
         resolve({
           data: {
             url: URL.createObjectURL(bold),
-            name: bold.name
+            filename: bold.name
           }
         })
       }
