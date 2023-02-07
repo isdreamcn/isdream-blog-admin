@@ -15,6 +15,14 @@ export const columns: TableColumns = [
     label: '名称'
   },
   {
+    key: 'width',
+    label: '宽度'
+  },
+  {
+    key: 'height',
+    label: '高度'
+  },
+  {
     key: 'createdAt',
     label: '创建日期',
     slot: true
@@ -36,6 +44,30 @@ export const dialogFields: FormFields<keyof EmojiTypeData> = [
       {
         required: true,
         message: '请输入名称',
+        trigger: 'change'
+      }
+    ]
+  },
+  {
+    key: 'width',
+    label: '宽度',
+    tag: 'ElInput',
+    validateRules: [
+      {
+        required: true,
+        message: '请输入宽度',
+        trigger: 'change'
+      }
+    ]
+  },
+  {
+    key: 'height',
+    label: '高度',
+    tag: 'ElInput',
+    validateRules: [
+      {
+        required: true,
+        message: '请输入高度',
         trigger: 'change'
       }
     ]
