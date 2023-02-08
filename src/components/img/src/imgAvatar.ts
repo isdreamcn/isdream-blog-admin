@@ -9,7 +9,7 @@ export const imgAvatarProps = buildProps({
   src: String
 } as const)
 
-const colours = [
+const colors = [
   '#1abc9c',
   '#2ecc71',
   '#3498db',
@@ -42,8 +42,8 @@ export const hashColor = (username: string) => {
     hashCode = 37 * hashCode + str.charCodeAt(i)
   }
   // 取余操作
-  const index = hashCode % 19
-  return colours[index]
+  const index = hashCode % colors.length
+  return colors[index]
 }
 
 export type ImgAvatarProps = ExtractPropTypes<typeof imgAvatarProps>
