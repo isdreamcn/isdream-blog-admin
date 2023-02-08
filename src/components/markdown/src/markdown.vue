@@ -32,6 +32,7 @@ const vditorValue = ref(setBaseUrlFile(props.modelValue))
 // 上传图片
 const { vditorUploadOptions } = useVditorUpload(props, (imgUrl, filename) => {
   vditorValue.value += `![${filename}](${imgUrl})`
+  vditor.value?.setValue(vditorValue.value)
 })
 
 watch(
