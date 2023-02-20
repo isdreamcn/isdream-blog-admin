@@ -4,12 +4,9 @@ import { formProps } from '@/components/form'
 import { buildProps, definePropType } from '@/utils'
 
 type FormDialogHttpGet = (id: number) => Promise<Record<string, any>>
-type FormDialogHttpAdd = (data: Record<string, any>) => Promise<any>
-type FormDialogHttpEdit = (
-  id: number,
-  data: Record<string, any>
-) => Promise<any>
-type FormDialogHandler = (data: Record<string, any>) => Record<string, any>
+type FormDialogHttpAdd = (data: any) => Promise<any>
+type FormDialogHttpEdit = (id: number, data: any) => Promise<any>
+type FormDialogHandler = (data: any) => Record<string, any>
 
 export const formDialogProps = buildProps({
   fields: formProps['fields'],
