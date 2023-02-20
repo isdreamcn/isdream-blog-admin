@@ -6,14 +6,13 @@
 
 <script setup lang="ts">
 //TODO https://b3log.org/vditor/
-import '~/public/vditor/ant'
-import '~/public/vditor/zh_CN'
+import 'vditor/dist/index.css'
+import Vditor from 'vditor'
+import { toolbar } from './vditor/vditor'
+
 import { markdownProps, markdownEmits } from './markdown'
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
-import Vditor from 'vditor'
-import { uniqueId } from 'lodash-unified'
-import { setBaseUrlFile } from '@/utils'
-import 'vditor/dist/index.css'
+import { uniqueId, setBaseUrlFile } from '@/utils'
 import { useVditorTheme, useVditorUpload } from './hooks'
 
 defineOptions({
@@ -25,16 +24,17 @@ const emit = defineEmits(markdownEmits)
 
 const vditorId = uniqueId('vditor-')
 const vditor = ref<Vditor>()
-const { vditorTheme } = useVditorTheme(vditor)
 
 // value
 const vditorValue = ref(setBaseUrlFile(props.modelValue))
-// 上传图片
-const { vditorUploadOptions } = useVditorUpload(props, (imgUrl, filename) => {
-  vditorValue.value += `![${filename}](${imgUrl})`
-  vditor.value?.setValue(vditorValue.value)
-})
-
+// v-model
+watch(
+  () => vditorValue.value,
+  (val) => {
+    emit('update:modelValue', val)
+    emit('change', val)
+  }
+)
 watch(
   () => props.modelValue,
   (val) => {
@@ -45,28 +45,32 @@ watch(
     if (vditor.value) {
       vditor.value.setValue(setBaseUrlFile(val))
     }
-  },
-  {
-    immediate: true
   }
 )
 
-watch(
-  () => vditorValue.value,
-  (val) => {
-    emit('update:modelValue', val)
-    emit('change', val)
+// 主题
+const { vditorTheme } = useVditorTheme(vditor)
+// 上传图片
+const { vditorUploadOptions } = useVditorUpload(props, (val) => {
+  if (vditor.value) {
+    vditor.value.insertValue(val)
+  } else {
+    vditorValue.value += val
   }
-)
+})
+
+let _toolbar = toolbar
+if (!props.upload) {
+  _toolbar = toolbar.filter((item) => item !== 'upload')
+}
 
 const init = () => {
   vditor.value = new Vditor(vditorId, {
     // 设置外观主题
     theme: vditorTheme.theme.value,
     lang: 'zh_CN',
-    i18n: window.VditorI18n,
     mode: 'ir',
-    toolbar: props.toolbar,
+    toolbar: _toolbar,
     preview: {
       theme: {
         // 设置内容主题
@@ -74,15 +78,16 @@ const init = () => {
       },
       hljs: {
         // 设置代码块主题
-        style: vditorTheme.code.value
+        style: vditorTheme.code.value,
+        lineNumber: true
       },
       actions: []
     },
     cache: {
       enable: false
     },
-    ...vditorUploadOptions,
     ...props.options,
+    ...vditorUploadOptions,
     input: (v) => {
       vditorValue.value = v
     },

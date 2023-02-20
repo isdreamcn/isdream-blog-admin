@@ -1,12 +1,13 @@
 <template>
-  <div class="m-markdown-view" ref="vditorViewRef">MMarkdownView</div>
+  <div class="m-markdown-view" ref="vditorViewRef">加载中...</div>
 </template>
 
 <script setup lang="ts">
-import { markdownViewProps } from './markdownView'
+import 'vditor/dist/index.css'
 import Vditor from 'vditor'
+
+import { markdownViewProps } from './markdownView'
 import { ref, watch, onMounted } from 'vue'
-import { setBaseUrlFile } from '@/utils'
 import { useVditorTheme } from './hooks'
 
 defineOptions({
@@ -16,14 +17,12 @@ defineOptions({
 const props = defineProps(markdownViewProps)
 
 const vditorViewRef = ref<HTMLDivElement>()
-
 const { vditorTheme } = useVditorTheme()
-
 const init = () => {
   if (!vditorViewRef.value) {
     return
   }
-  Vditor.preview(vditorViewRef.value, setBaseUrlFile(props.value), {
+  Vditor.preview(vditorViewRef.value, props.value, {
     mode: vditorTheme.content.value,
     theme: {
       // 设置内容主题
@@ -31,8 +30,10 @@ const init = () => {
     },
     hljs: {
       // 设置代码块主题
-      style: vditorTheme.code.value
-    }
+      style: vditorTheme.code.value,
+      lineNumber: true
+    },
+    ...props.options
   })
 }
 

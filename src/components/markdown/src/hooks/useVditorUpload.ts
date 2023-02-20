@@ -3,24 +3,28 @@ import { joinBaseUrlFile } from '@/utils'
 
 export const useVditorUpload = (
   props: MarkdownProps,
-  change: (imgUrl: string, filename: string) => void = () => {}
+  callback: (val: string) => void = () => {}
 ) => {
   return {
     vditorUploadOptions: {
       upload: {
-        // url: serviceBaseURL + Api.Upload,
         handler: (files: File[]): Promise<any> => {
           if (!props.upload) {
-            return Promise.resolve('请配置http')
+            return Promise.resolve('请配置upload')
           }
           const file = files[0]
           const formData = new FormData()
           formData.append(props.uploadFileKey, file)
           return props
             .upload(formData)
-            .then((res) => {
-              const { url, filename } = res.data
-              change(joinBaseUrlFile(url), filename)
+            .then(({ data }) => {
+              if (!/^blob:/.test(data.url)) {
+                data.url = joinBaseUrlFile(data.url)
+              }
+              callback(
+                (/^image\//.test(data.mimeType) ? '!' : '') +
+                  `[${data.filename}](${data.url})`
+              )
               return '上传成功'
             })
             .catch(() => {
@@ -28,7 +32,7 @@ export const useVditorUpload = (
             })
         },
         multiple: false,
-        accept: 'image/*'
+        accept: props.uploadFileAccept
       }
     }
   }

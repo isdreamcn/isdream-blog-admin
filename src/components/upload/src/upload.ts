@@ -5,7 +5,7 @@ import type {
   UploadFile
 } from 'element-plus'
 import { buildProps, definePropType, isArray } from '@/utils'
-import { upload } from '@/api/common'
+import { uploadCommon } from '@/api/common'
 
 export type UploadUserFile = {
   url: string
@@ -67,7 +67,7 @@ export const uploadProps = buildProps({
   },
   http: {
     type: definePropType<UploadHttp>(Function),
-    default: upload
+    default: uploadCommon
   },
   httpFileKey: {
     type: String,
