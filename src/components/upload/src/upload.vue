@@ -64,6 +64,8 @@ watch(
         status: 'success',
         response: item
       }))
+    } else if (!props.modelValue?.length) {
+      fileList.value = []
     }
   },
   {
