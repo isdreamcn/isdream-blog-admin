@@ -67,8 +67,6 @@ const cancel = () => {
   }
   elFormRef?.resetFields()
   visible.value = false
-  const value = cloneDeep(props.value)
-  formData.value = value
   emit('update:modelValue', false)
 }
 
