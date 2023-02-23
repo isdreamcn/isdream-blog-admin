@@ -70,7 +70,7 @@ const search = (data: any) => {
 
 // 查看
 const view = (id: number) => {
-  window.open(`https://isdream.cn/#/article/${id}`)
+  window.open(`https://isdream.cn/article/${id}`)
 }
 
 // 新增/编辑

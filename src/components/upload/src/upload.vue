@@ -57,15 +57,16 @@ const fileList = ref<ElUploadUserFile[]>([])
 watch(
   () => props.modelValue,
   () => {
-    if (props.modelValue.find((v) => !v.uid)) {
+    if (
+      Array.isArray(props.modelValue) &&
+      JSON.stringify(props.modelValue) !== JSON.stringify(fileList.value)
+    ) {
       fileList.value = props.modelValue.map((item) => ({
         name: item.filename,
         url: joinBaseUrlFile(item.url),
         status: 'success',
         response: item
       }))
-    } else if (!props.modelValue?.length) {
-      fileList.value = []
     }
   },
   {
