@@ -18,7 +18,7 @@ import {
   onDeactivated,
   onBeforeUnmount
 } from 'vue'
-import { setBaseUrlFile } from '@/utils'
+import { setBaseUrlFile, removeBaseUrlFile } from '@/utils'
 import { bindHandlers } from './tinymce/helper'
 import { useTinymceOptions, useTinymceImgUpload } from './hooks'
 import './tinymce/resource'
@@ -124,10 +124,11 @@ function initSetup(e: Record<string, any>) {
 }
 
 function bindModelHandlers(editor: Editor) {
+  let content = ''
   watch(
     () => props.modelValue,
-    (val, prevVal) => {
-      if (val === prevVal || val === editor.getContent()) {
+    (val) => {
+      if (val === content) {
         return
       }
       editor.setContent(setBaseUrlFile(val))
@@ -135,7 +136,7 @@ function bindModelHandlers(editor: Editor) {
   )
 
   editor.on('change keyup undo redo', () => {
-    const content = editor.getContent()
+    content = removeBaseUrlFile(editor.getContent())
     emit('update:modelValue', content)
     emit('change', content)
   })

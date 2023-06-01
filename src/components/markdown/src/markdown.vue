@@ -12,7 +12,7 @@ import { toolbar } from './vditor/vditor'
 
 import { markdownProps, markdownEmits } from './markdown'
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
-import { uniqueId, setBaseUrlFile } from '@/utils'
+import { uniqueId, setBaseUrlFile, removeBaseUrlFile } from '@/utils'
 import { useVditorTheme, useVditorUpload } from './hooks'
 
 defineOptions({
@@ -27,18 +27,20 @@ const vditor = ref<Vditor>()
 
 // value
 const vditorValue = ref(setBaseUrlFile(props.modelValue))
+let vditorContent = ''
 // v-model
 watch(
   () => vditorValue.value,
   (val) => {
-    emit('update:modelValue', val)
-    emit('change', val)
+    vditorContent = removeBaseUrlFile(val)
+    emit('update:modelValue', vditorContent)
+    emit('change', vditorContent)
   }
 )
 watch(
   () => props.modelValue,
   (val) => {
-    if (val === vditorValue.value) {
+    if (val === vditorContent) {
       return
     }
 
