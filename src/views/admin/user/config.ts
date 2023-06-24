@@ -19,6 +19,11 @@ export const columns: TableColumns = [
     slot: true
   },
   {
+    key: 'tempAvatar',
+    label: '待审核头像',
+    slot: true
+  },
+  {
     key: 'email',
     label: '邮箱'
   },

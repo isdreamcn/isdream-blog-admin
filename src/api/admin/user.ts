@@ -7,7 +7,8 @@ enum Api {
   Del = '/api/user',
   Add = '/api/user',
   Details = '/api/user',
-  Edit = '/api/user'
+  Edit = '/api/user',
+  SetAvatar = '/api/user/setAvatar'
 }
 
 export const getUserList = (params?: CommonListParams) => {
@@ -47,6 +48,14 @@ export const userEdit = (id: number, data: UserEditData) => {
     url: `${Api.Edit}/${id}`,
     method: 'PUT',
     data
+  })
+}
+
+// 审核用户头像
+export const setAvatar = (id: number) => {
+  return service.request({
+    url: `${Api.SetAvatar}/${id}`,
+    method: 'POST'
   })
 }
 

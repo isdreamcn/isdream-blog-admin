@@ -3,7 +3,7 @@
     <template v-if="loading">
       <img
         v-show="!showThumb"
-        :src="props.src"
+        :src="props.src && joinBaseUrlFile(props.src)"
         v-bind="$attrs"
         @mousedown="(e) => e.preventDefault()"
         @load="onLoad"
@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { imgProps, imgEmits } from './img'
+import { joinBaseUrlFile } from '@/utils'
 
 defineOptions({
   name: 'MImg'

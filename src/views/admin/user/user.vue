@@ -20,6 +20,13 @@
       <template #avatar="{ value, row }">
         <MImgAvatar :src="value" :username="row.username"></MImgAvatar>
       </template>
+      <template #tempAvatar="{ value, row }">
+        <MImgAvatar
+          v-if="value"
+          :src="value"
+          :username="row.username"
+        ></MImgAvatar>
+      </template>
       <template #website="{ value }">
         <el-link type="primary" :href="value" target="_blank">{{
           value
@@ -29,6 +36,14 @@
         <span v-dateFormat:YYYY-MM-DD="value"></span>
       </template>
       <template #actions="{ row }">
+        <MA
+          v-if="row.tempAvatar"
+          pop
+          type="primary"
+          popTitle="确认审核通过？"
+          @click="setUserAvatar(row.id)"
+          >审核头像</MA
+        >
         <MA type="primary" @click="edit(row.id)">编辑</MA>
         <MA type="danger" @click="del(row.id)">删除</MA>
       </template>
@@ -54,7 +69,8 @@ import {
   userDel,
   userAdd,
   userEdit,
-  userDetails
+  userDetails,
+  setAvatar
 } from '@/api/admin/user'
 
 defineOptions({
@@ -92,6 +108,12 @@ const clearSelectKeysReload = () => {
 
 const del = (id: number) => {
   userDel(id).then(clearSelectKeysReload)
+}
+
+const setUserAvatar = (id: number) => {
+  setAvatar(id).then(() => {
+    reload()
+  })
 }
 </script>
 
