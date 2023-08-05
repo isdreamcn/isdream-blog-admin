@@ -34,7 +34,8 @@ export default {
         title: '编辑',
         icon: 'icon-edit',
         hiddenInMenu: true,
-        keepAlive: false
+        keepAlive: false,
+        needRouteHistory: false
       },
       component: () => import('@/views/admin/article/edit/edit.vue')
     }

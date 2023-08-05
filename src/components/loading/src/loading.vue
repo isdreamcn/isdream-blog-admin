@@ -24,7 +24,7 @@ const props = defineProps(loadingProps)
   left: 0;
   right: 0;
   background-color: #ffffff;
-  z-index: 99;
+  z-index: 9999;
   overflow: hidden;
 
   display: flex;

@@ -7,7 +7,6 @@ export interface CommonListParams {
 export interface UploadFile {
   id: number
   url: string
-  thumbUrl?: string
   filename: string
   mimeType: string
   createdAt: string

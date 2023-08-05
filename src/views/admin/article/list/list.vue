@@ -20,7 +20,10 @@
       </template>
 
       <template #cover="{ value }">
-        <MViewFile :src="value?.url" :mimeType="value?.mimeType"></MViewFile>
+        <MViewFile
+          :src="filePathQuery(value?.url, { w: 100, f: 'webp' })"
+          :mimeType="value?.mimeType"
+        ></MViewFile>
       </template>
 
       <template #isCommented="{ value, row }">
@@ -47,6 +50,7 @@
 <script setup lang="ts">
 import { ref, onActivated } from 'vue'
 import { useRouter } from 'vue-router'
+import { filePathQuery } from '@/utils'
 import { columns, fields } from './config'
 import {
   getArticleList,
