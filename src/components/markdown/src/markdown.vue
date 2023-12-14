@@ -11,9 +11,9 @@ import Vditor from 'vditor'
 import { toolbar } from './vditor/vditor'
 
 import { markdownProps, markdownEmits } from './markdown'
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { watch, onMounted, onBeforeUnmount } from 'vue'
 import { uniqueId, setBaseUrlFile, removeBaseUrlFile } from '@/utils'
-import { useVditorTheme, useVditorUpload } from './hooks'
+import { useVditorTheme, useVditorUpload, useVditorCDN } from './hooks'
 
 defineOptions({
   name: 'MMarkDown'
@@ -23,42 +23,36 @@ const props = defineProps(markdownProps)
 const emit = defineEmits(markdownEmits)
 
 const vditorId = uniqueId('vditor-')
-const vditor = ref<Vditor>()
+let vditor: Nullable<Vditor> = null
 
-// value
-const vditorValue = ref(setBaseUrlFile(props.modelValue))
-let vditorContent = ''
 // v-model
-watch(
-  () => vditorValue.value,
-  (val) => {
-    vditorContent = removeBaseUrlFile(val)
-    emit('update:modelValue', vditorContent)
-    emit('change', vditorContent)
-  }
-)
+let vditorContent = ''
+const setVditorContent = (content: string) => {
+  vditorContent = removeBaseUrlFile(content)
+  emit('update:modelValue', vditorContent)
+  emit('change', vditorContent)
+
+  if (!vditor) return
+  vditor.setValue(setBaseUrlFile(content))
+}
+
 watch(
   () => props.modelValue,
   (val) => {
-    if (val === vditorContent) {
-      return
-    }
-
-    if (vditor.value) {
-      vditor.value.setValue(setBaseUrlFile(val))
-    }
+    if (val === vditorContent) return
+    setVditorContent(val)
   }
 )
 
 // 主题
-const { vditorTheme } = useVditorTheme(vditor)
+const { vditorTheme, setVditorTheme } = useVditorTheme()
+watch(vditorTheme.theme, () => {
+  setVditorTheme(vditor)
+})
+
 // 上传图片
 const { vditorUploadOptions } = useVditorUpload(props, (val) => {
-  if (vditor.value) {
-    vditor.value.insertValue(val)
-  } else {
-    vditorValue.value += val
-  }
+  setVditorContent(vditorContent + val)
 })
 
 let _toolbar = toolbar
@@ -66,8 +60,10 @@ if (!props.upload) {
   _toolbar = toolbar.filter((item) => item !== 'upload')
 }
 
+const vditorCDN = useVditorCDN()
 const init = () => {
-  vditor.value = new Vditor(vditorId, {
+  vditor = new Vditor(vditorId, {
+    cdn: vditorCDN.cdn,
     // 设置外观主题
     theme: vditorTheme.theme.value,
     lang: 'zh_CN',
@@ -76,7 +72,8 @@ const init = () => {
     preview: {
       theme: {
         // 设置内容主题
-        current: vditorTheme.content.value
+        current: vditorTheme.content.value,
+        path: vditorCDN.themePath
       },
       hljs: {
         // 设置代码块主题
@@ -85,25 +82,29 @@ const init = () => {
       },
       actions: []
     },
+    hint: {
+      emojiPath: vditorCDN.emojiPath
+    },
     cache: {
       enable: false
     },
     ...props.options,
     ...vditorUploadOptions,
     input: (v) => {
-      vditorValue.value = v
+      setVditorContent(v)
     },
     after: () => {
       // vditor.value is a instance of Vditor now and thus can be safely used here
-      vditor.value!.setValue(vditorValue.value)
-      emit('getVditor', vditor.value!)
+      setVditorContent(props.modelValue)
+      emit('getVditor', vditor!)
     }
   })
 }
 
 const destroy = () => {
-  vditor.value!.destroy()
-  vditor.value = undefined
+  if (!vditor) return
+  vditor.destroy()
+  vditor = null
 }
 
 onMounted(() => {
@@ -117,7 +118,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .m-markdown {
-  width: 100%;
   margin-top: 20px;
+  width: 100%;
 }
 </style>
