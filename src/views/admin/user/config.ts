@@ -1,4 +1,4 @@
-import type { TableColumns, FormFields } from '@/components'
+import type { TableColumn, FormFields } from '@/components'
 
 export const fields: FormFields = [
   {
@@ -8,7 +8,7 @@ export const fields: FormFields = [
   }
 ]
 
-export const columns: TableColumns = [
+export const columns: TableColumn[] = [
   {
     key: 'username',
     label: '昵称'

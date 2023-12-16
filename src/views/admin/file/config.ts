@@ -1,5 +1,4 @@
-import type { TableColumns, FormFields } from '@/components'
-import { File } from '@/api/admin/file'
+import type { TableColumn, FormFields } from '@/components'
 
 export const fields: FormFields = [
   {
@@ -9,7 +8,7 @@ export const fields: FormFields = [
   }
 ]
 
-export const columns: TableColumns<keyof File | 'actions'> = [
+export const columns: TableColumn[] = [
   {
     key: 'url',
     label: '预览',

@@ -2,7 +2,7 @@
   <el-checkbox-group v-model="value">
     <el-checkbox
       v-for="item in props.options"
-      :key="item.label"
+      :key="item.value"
       :label="item.value"
       :disabled="item.disabled"
     >
@@ -13,13 +13,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { formComponentsMultipleProps, formComponentsEmits } from './components'
+import { formComponentsProps, formComponentsEmits } from './components'
 
 defineOptions({
   name: 'MCheckboxGroup'
 })
 
-const props = defineProps(formComponentsMultipleProps)
+const props = defineProps(formComponentsProps)
 const emit = defineEmits(formComponentsEmits)
 
 const value = computed({

@@ -1,7 +1,7 @@
 import type FormDialog from './formDialog.vue'
 import type { ExtractPropTypes } from 'vue'
-import { formProps } from '@/components/form'
-import { buildProps, definePropType } from '@/utils'
+import type { FormField } from '@/components/form'
+import { buildProps, definePropType, isBoolean } from '@/utils'
 
 type FormDialogHttpGet = (id: number) => Promise<Record<string, any>>
 type FormDialogHttpAdd = (data: any) => Promise<any>
@@ -9,7 +9,10 @@ type FormDialogHttpEdit = (id: number, data: any) => Promise<any>
 type FormDialogHandler = (data: any) => Record<string, any>
 
 export const formDialogProps = buildProps({
-  fields: formProps['fields'],
+  fields: {
+    type: definePropType<FormField[]>(Array),
+    default: () => []
+  },
   modelValue: {
     type: Boolean,
     default: false
@@ -20,7 +23,15 @@ export const formDialogProps = buildProps({
   },
   value: {
     type: Object,
-    default: () => {}
+    default: () => ({})
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  disabledTitle: {
+    type: String,
+    default: '查看'
   },
   addTitle: {
     type: String,
@@ -32,7 +43,10 @@ export const formDialogProps = buildProps({
   },
   httpGet: {
     type: definePropType<FormDialogHttpGet>(Function),
-    default: () => Promise.resolve({})
+    default: () =>
+      Promise.resolve({
+        data: {}
+      })
   },
   httpAdd: {
     type: definePropType<FormDialogHttpAdd>(Function),
@@ -55,8 +69,7 @@ export const formDialogProps = buildProps({
 } as const)
 
 export const formDialogEmits = {
-  'update:modelValue': (visible: boolean) =>
-    visible === false || visible === true,
+  'update:modelValue': (visible: boolean) => isBoolean(visible),
   reload: () => true
 }
 

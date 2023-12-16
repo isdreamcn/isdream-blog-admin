@@ -3,7 +3,7 @@ import type { PaginationParams } from './usePagination'
 import { reactive, watch, readonly, computed } from 'vue'
 
 interface HttpRes {
-  data: any[] | null
+  data: Nullable<any[]>
   total: number
   loading: boolean
 }
@@ -11,7 +11,7 @@ interface HttpRes {
 export const useHttpData = (
   props: TableProps,
   paginationParams: Partial<PaginationParams>,
-  requestFinally: Function = () => {}
+  requestFinally = () => {}
 ) => {
   const httpRes = reactive<HttpRes>({
     data: null,
@@ -52,7 +52,6 @@ export const useHttpData = (
       if (httpLazy) {
         httpLazy = false
         httpRes.loading = true
-        requestFinally()
         return
       }
       requestHttp()

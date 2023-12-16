@@ -2,7 +2,7 @@
   <el-radio-group v-model="value">
     <el-radio
       v-for="item in props.options"
-      :key="item.label"
+      :key="item.value"
       :label="item.value"
       :disabled="item.disabled"
     >

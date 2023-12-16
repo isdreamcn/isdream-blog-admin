@@ -1,24 +1,22 @@
 <template>
   <el-dropdown>
-    <span class="el-avatar-box">
+    <span class="avatar__container">
       <el-avatar :src="userInfo?.avatar" @error="errorHandler">
-        {{ userInfo?.username }}
+        <m-icon name="iconUserFilled"></m-icon>
       </el-avatar>
       {{ userInfo?.username }}
     </span>
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item disabled>修改密码</el-dropdown-item>
-        <el-dropdown-item @click="layout">退出登录</el-dropdown-item>
+        <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { useUserStore } from '@/store'
-import config from '@/config'
 
 defineOptions({
   name: 'LayoutCpnUserMenu'
@@ -27,24 +25,24 @@ defineOptions({
 const userStore = useUserStore()
 const userInfo = userStore.userInfo
 
-const router = useRouter()
-const layout = () => {
-  userStore.layout()
-  router.push({
-    name: config.routeLoginName
-  })
+const logout = () => {
+  userStore.logout()
 }
 
 const errorHandler = () => {}
 </script>
 
 <style lang="scss" scoped>
-.el-avatar-box {
+.avatar__container {
   @include m-menu-theme();
   display: flex;
   align-items: center;
+  &:focus-visible {
+    outline: unset;
+  }
   .el-avatar {
     margin-right: 8px;
+    font-size: 18px;
   }
 }
 </style>

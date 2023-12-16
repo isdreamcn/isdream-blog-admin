@@ -1,4 +1,4 @@
-import type { TableColumns, FormFields } from '@/components'
+import type { TableColumn, FormFields } from '@/components'
 import type { LinkData } from '@/api/admin/types/link.type'
 import { reactive } from 'vue'
 
@@ -18,7 +18,7 @@ export const fields = reactive<FormFields>([
   }
 ])
 
-export const columns: TableColumns = [
+export const columns: TableColumn[] = [
   {
     key: 'icon',
     label: '头像',

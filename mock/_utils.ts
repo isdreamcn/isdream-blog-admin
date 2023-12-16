@@ -3,6 +3,34 @@ import type {
   UserLoginMenu
 } from '@/api/user/types/login.type'
 
+export const formatUrl = (url: string) => `/mockApi/${url}`
+export const formatMsg = (msg: string) => `${msg} (mockApi)`
+
+interface ResultTablePaginationOptions {
+  page: number
+  pageSize: number
+  count?: number
+}
+
+// 生成分页数据
+export const generateResultPagination = <T = any>(
+  generater: (index: number) => T,
+  options?: ResultTablePaginationOptions
+): Service.ResultPagination<T[]> => {
+  const { page = 1, pageSize = 10, count = 100 } = options || {}
+  const data: any[] = []
+  const start = (page - 1) * pageSize
+  const end = page * pageSize > count ? count : page * pageSize
+
+  for (let i = start + 1; i <= end; i++) {
+    data.push(generater(i))
+  }
+  return {
+    data,
+    count
+  }
+}
+
 interface MockUserLoginList extends UserLoginResult {
   username: string
   password: string
@@ -15,12 +43,24 @@ export const useUserList = (): MockUserLoginList[] => {
     {
       username: 'admin',
       password: '123456',
-      token: '123456789',
+      token: 'ud1Ow3F7ofBFiHd3mOj1OBCKL',
       user: {
         id: 1,
         username: 'admin'
       },
-      permissions: ['tableSearch'],
+      permissions: ['tableSearch', 'test'],
+      // 路由
+      menus: []
+    },
+    {
+      username: 'test',
+      password: '123456',
+      token: 'uRP85yE5kBTtzBa2jTC4G5MtG',
+      user: {
+        id: 2,
+        username: 'test'
+      },
+      permissions: [],
       // 路由
       menus: [
         {
@@ -74,29 +114,4 @@ export const useUserList = (): MockUserLoginList[] => {
       ]
     }
   ]
-}
-
-interface ResultPaginationOptions {
-  page: number
-  pageSize: number
-  count?: number
-}
-
-// 生成分页数据
-export const generateResultPagination = <T = any>(
-  generater: (index: number) => T,
-  options?: ResultPaginationOptions
-): Service.ResultPagination<T[]> => {
-  const { page = 1, pageSize = 10, count = 100 } = options || {}
-  const data: any[] = []
-  const start = (page - 1) * pageSize
-  const end = page * pageSize > count ? count : page * pageSize
-
-  for (let i = start + 1; i <= end; i++) {
-    data.push(generater(i))
-  }
-  return {
-    data,
-    count
-  }
 }

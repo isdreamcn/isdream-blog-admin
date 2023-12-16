@@ -1,6 +1,6 @@
 <template>
   <div class="m-editor">
-    <textarea ref="elRef" :id="tinymceId" :key="tinymceId"></textarea>
+    <textarea :id="tinymceId" :key="tinymceId"></textarea>
   </div>
 </template>
 
@@ -8,16 +8,7 @@
 import type { Editor } from 'tinymce'
 import { editorProps, editorEmits } from './editor'
 import tinymce from 'tinymce/tinymce'
-import {
-  ref,
-  watch,
-  nextTick,
-  useAttrs,
-  onMounted,
-  onActivated,
-  onDeactivated,
-  onBeforeUnmount
-} from 'vue'
+import { watch, useAttrs, onMounted, onActivated, onBeforeUnmount } from 'vue'
 import { setBaseUrlFile, removeBaseUrlFile } from '@/utils'
 import { bindHandlers } from './tinymce/helper'
 import { useTinymceOptions, useTinymceImgUpload } from './hooks'
@@ -31,70 +22,35 @@ const attrs = useAttrs()
 const props = defineProps(editorProps)
 const emit = defineEmits(editorEmits)
 
-// refs
-const editorRef = ref<Editor>()
-const elRef = ref<HTMLElement>()
+let editor: Nullable<Editor> = null
 
 const { options: imgUploadOptions } = useTinymceImgUpload(props)
-const { tinymceOptions, tinymceId } = useTinymceOptions(
+const { tinymceOptions, tinymceId, skinName } = useTinymceOptions(
   props,
   {
     ...imgUploadOptions
   },
-  (editor) => {
-    editorRef.value = editor
+  (_editor) => {
+    editor = _editor
     editor.on('init', (e) => initSetup(e))
+    emit('inited', editor)
   }
 )
 
-// disabled
-watch(
-  () => props.disabled,
-  () => {
-    nextTick(() => {
-      if (!editorRef.value) {
-        return
-      }
-      editorRef.value.setMode(props.disabled ? 'readonly' : 'design')
-    })
-  },
-  {
-    immediate: true
-  }
-)
-
-let inited = false
 const initEditor = () => {
-  if (inited) {
-    return
-  }
-  inited = true
-  if (elRef.value) {
-    elRef.value.style.visibility = ''
-  }
-  tinymce
-    .init(tinymceOptions.value)
-    .then((editor) => {
-      emit('inited', editor)
-    })
-    .catch((err) => {
-      emit('init-error', err)
-    })
+  if (editor) return
+  tinymce.init(tinymceOptions.value).catch((err) => {
+    emit('init-error', err)
+  })
 }
 
 const destory = () => {
-  if (!inited) {
-    return
-  }
-  inited = false
+  if (!editor) return
   tinymce.remove(tinymceOptions.value.selector!)
+  editor = null
 }
 
 onMounted(() => {
-  initEditor()
-})
-
-onActivated(() => {
   initEditor()
 })
 
@@ -103,43 +59,64 @@ onBeforeUnmount(() => {
 })
 
 // tinymce init 之后会创建一个动态iframe 而keep-alive回来之后iframe是空的
-// TODO: https://github.com/PanJiaChen/vue-element-admin/issues/141
-onDeactivated(() => {
+onActivated(() => {
   destory()
+  initEditor()
 })
 
-function initSetup(e: Record<string, any>) {
-  const editor = editorRef.value
-  if (!editor) {
-    return
+// disabled
+watch(
+  () => props.disabled,
+  () => {
+    setMode()
   }
+)
 
-  editor.setContent(setBaseUrlFile(props.modelValue))
-  // 光标放在最后
-  editor.selection.select(editor.getBody(), true)
-  editor.selection.collapse(false)
+// 模式切换 light dark
+watch(skinName, () => {
+  destory()
+  initEditor()
+})
 
-  bindModelHandlers(editor)
+// modelValue
+let editorContent = ''
+watch(
+  () => props.modelValue,
+  (val) => {
+    if (val === editorContent) return
+    setContent(val)
+  }
+)
+
+function initSetup(e: Record<string, any>) {
+  if (!editor) return
+
+  setMode()
+  setContent(props.modelValue)
+  bindModelValueHandler(editor)
   bindHandlers(e, attrs, editor)
 }
 
-function bindModelHandlers(editor: Editor) {
-  let content = ''
-  watch(
-    () => props.modelValue,
-    (val) => {
-      if (val === content) {
-        return
-      }
-      editor.setContent(setBaseUrlFile(val))
-    }
-  )
-
+function bindModelValueHandler(editor: Editor) {
   editor.on('change keyup undo redo', () => {
-    content = removeBaseUrlFile(editor.getContent())
-    emit('update:modelValue', content)
-    emit('change', content)
+    editorContent = removeBaseUrlFile(editor.getContent())
+    emit('update:modelValue', editorContent)
+    emit('change', editorContent)
   })
+}
+
+function setMode() {
+  if (!editor) return
+  editor.setMode(props.disabled ? 'readonly' : 'design')
+}
+
+function setContent(content: string) {
+  if (!editor) return
+  editor.setContent(setBaseUrlFile(content))
+  // 光标移到最后
+  const editorBody = editor.getBody()
+  editor.selection.select(editorBody, true)
+  editor.selection.collapse(false)
 }
 </script>
 

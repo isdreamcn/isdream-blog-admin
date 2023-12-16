@@ -1,17 +1,11 @@
-import type { RequestInterceptors } from '../types'
+import type { ServiceInterceptors } from '../service'
 import { ElMessage } from 'element-plus'
 import { HttpStatusCode } from '@/constants'
-
-import db from '@/storage'
-import appConfig from '@/config'
-import router from '@/router'
+import { useUserStore } from '@/store'
 
 // 身份验证失败
 const failAuth = () => {
-  db.clear()
-  router.push({
-    name: appConfig.routeLoginName
-  })
+  useUserStore().logout()
 }
 interface FailHandler {
   message?: string
@@ -22,9 +16,11 @@ interface FailHandler {
 const failCodeMap = new Map<HttpStatusCode, FailHandler>([
   [HttpStatusCode.Unauthorized, { handler: failAuth }],
   [HttpStatusCode.Forbidden, { handler: failAuth }],
-  [HttpStatusCode.Bad_Request, {}],
-  [HttpStatusCode.Internal_Server_Error, {}],
-  [HttpStatusCode.Unprocessable_Entity, {}]
+  [HttpStatusCode.Not_Found, { message: '404 (Not Found)' }],
+  [
+    HttpStatusCode.Internal_Server_Error,
+    { message: '500 (Internal Server Error)' }
+  ]
 ])
 
 const handleError = (code: number, message?: string) => {
@@ -41,21 +37,23 @@ const handleError = (code: number, message?: string) => {
   return false
 }
 
-export const useHandleError = (): RequestInterceptors => {
+export const useHandleError = (): ServiceInterceptors => {
   return {
-    responseInterceptor(config) {
-      const data = config.data
+    responseInterceptor(res) {
+      const data = res.data
       if (handleError(data.code, data.message)) {
-        throw { response: config }
+        return Promise.reject({
+          response: res
+        })
       }
-      return config
+      return res
     },
     responseInterceptorCatch(err) {
       handleError(err.response.data?.code, err.response.data?.message)
       if (err.response.data?.code !== err.response.status) {
         handleError(err.response.status)
       }
-      return err
+      return Promise.reject(err)
     }
   }
 }

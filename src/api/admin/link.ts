@@ -3,11 +3,11 @@ import type { CommonListParams } from '../commonTypes'
 import service from '@/service'
 
 enum Api {
-  List = '/api/link',
-  Del = '/api/link',
-  Add = '/api/link',
-  Details = '/api/link',
-  Edit = '/api/link'
+  List = 'link',
+  Del = 'link',
+  Add = 'link',
+  Details = 'link',
+  Edit = 'link'
 }
 
 export const getLinkList = (params?: CommonListParams) => {

@@ -1,16 +1,23 @@
-import { buildProps, definePropType } from '@/utils'
-
 import type { ExtractPropTypes } from 'vue'
-import { AnimationItem, AnimationConfig } from 'lottie-web'
 import type Lottie from './lottie.vue'
+import { AnimationItem, AnimationConfig } from 'lottie-web'
+import { buildProps, definePropType, isNil } from '@/utils'
+
+export type LottieConfig = AnimationConfig
 
 export const lottieProps = buildProps({
   config: {
-    type: definePropType<AnimationConfig>(Object),
-    default: () => {}
+    type: definePropType<LottieConfig>(Object),
+    default: () => ({})
   },
-  width: Number,
-  height: Number,
+  width: {
+    type: String,
+    default: '100%'
+  },
+  height: {
+    type: String,
+    default: '100%'
+  },
   data: {
     type: Object,
     required: true
@@ -18,7 +25,7 @@ export const lottieProps = buildProps({
 } as const)
 
 export const lottieEmits = {
-  created: (anim: AnimationItem) => anim
+  created: (anim: AnimationItem) => !isNil(anim)
 }
 
 export type LottieProps = ExtractPropTypes<typeof lottieProps>

@@ -3,12 +3,12 @@ import type { CommonListParams } from '../commonTypes'
 import service from '@/service'
 
 enum Api {
-  Select = '/api/emoji_type/select',
-  List = '/api/emoji_type',
-  Del = '/api/emoji_type',
-  Add = '/api/emoji_type',
-  Details = '/api/emoji_type',
-  Edit = '/api/emoji_type'
+  Select = 'emoji_type/select',
+  List = 'emoji_type',
+  Del = 'emoji_type',
+  Add = 'emoji_type',
+  Details = 'emoji_type',
+  Edit = 'emoji_type'
 }
 
 export const getEmojiTypeSelect = () => {

@@ -1,6 +1,8 @@
 <template>
   <div class="error-404">
-    <MLottie class="lottie-box" :data="data404"></MLottie>
+    <div class="lottie-box">
+      <MLottie :data="data404"></MLottie>
+    </div>
     <div class="actions">
       <div>{{ tip }}</div>
       <el-space>
@@ -19,7 +21,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { randomNum } from '@/utils'
-import appConfig from '@/config'
+import { appConfig } from '@/config'
 import data404 from '@/assets/lottie/not-found-404.json'
 
 defineOptions({

@@ -1,7 +1,4 @@
-import { isArray, isObject } from '@vue/shared'
-import { isNil } from 'lodash-unified'
-
-export const isUndefined = (val: any): val is undefined => val === undefined
+import { isNil, isArray, isObject } from './plugins'
 
 export const isEmpty = (val: unknown) =>
   (!val && val !== 0) ||
@@ -15,4 +12,9 @@ export const isElement = (e: unknown): e is Element => {
 
 export const isPropAbsent = (prop: unknown): prop is null | undefined => {
   return isNil(prop)
+}
+
+export const isImageByExtname = (str: string) => {
+  const reg = /\.(jpg|jpeg|png|gif|bmp|webp)$/i
+  return reg.test(str)
 }

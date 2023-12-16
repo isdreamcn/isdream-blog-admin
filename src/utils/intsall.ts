@@ -1,10 +1,10 @@
 import type { App, AppContext, Directive, Plugin } from 'vue'
-import { NOOP } from '@vue/shared'
+import { NOOP } from './plugins'
 
 export type SFCWithInstall<T> = T & Plugin
 
 export type SFCInstallWithContext<T> = SFCWithInstall<T> & {
-  _context: AppContext | null
+  _context: Nullable<AppContext>
 }
 
 export const withInstall = <T, E extends Record<string, any>>(
@@ -13,8 +13,9 @@ export const withInstall = <T, E extends Record<string, any>>(
   mainName?: string
 ) => {
   ;(main as SFCWithInstall<T>).install = (app): void => {
-    for (const comp of [main, ...Object.values(extra ?? {})]) {
-      app.component(mainName || comp.name, comp)
+    app.component(mainName || (main as any).name, main as any)
+    for (const comp of [...Object.values(extra ?? {})]) {
+      app.component(comp.name, comp)
     }
   }
 

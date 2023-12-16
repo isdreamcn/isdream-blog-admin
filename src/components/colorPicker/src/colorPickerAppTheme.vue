@@ -1,6 +1,10 @@
 <template>
   <div class="m-color-picker-appTheme">
-    <MColorPicker v-model="color" :options="props.options"></MColorPicker>
+    <MColorPicker
+      v-model="color"
+      :options="props.options"
+      v-bind="$attrs"
+    ></MColorPicker>
   </div>
 </template>
 
@@ -24,7 +28,7 @@ const colorVal = computed(() => {
   return isString(color) ? color : ''
 })
 
-let cssVariable: Ref<string> | null = null
+let cssVariable: Nullable<Ref<string>> = null
 if (props.cssKey) {
   cssVariable = useCssVariable(props.cssKey, colorVal.value)
 }

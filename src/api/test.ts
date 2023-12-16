@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 export const getTestList = (params?: any) => {
+  console.log(params)
   return Promise.resolve<Service.ResultPagination>({
     code: 200,
     data: [
@@ -15,24 +15,29 @@ export const getTestList = (params?: any) => {
 
 export const testAdd = (data: any) => {
   return Promise.resolve({
-    code: 200
+    code: 200,
+    data
   })
 }
 
 export const testDel = (id: number) => {
   return Promise.resolve({
-    code: 200
+    code: 200,
+    id
   })
 }
 
 export const testDetails = (id: number) => {
   return Promise.resolve({
-    name: 'testDetails'
+    name: 'testDetails',
+    id
   })
 }
 
 export const testEdit = (id: number, data: any) => {
   return Promise.resolve({
-    code: 200
+    code: 200,
+    id,
+    data
   })
 }

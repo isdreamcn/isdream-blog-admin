@@ -1,14 +1,14 @@
 import type { User, UserAddData, UserEditData } from './types/user.type'
-import type { CommonListParams } from '@/api/commonTypes'
+import type { CommonListParams } from '../commonTypes'
 import service from '@/service'
 
 enum Api {
-  List = '/api/user',
-  Del = '/api/user',
-  Add = '/api/user',
-  Details = '/api/user',
-  Edit = '/api/user',
-  SetAvatar = '/api/user/setAvatar'
+  List = 'user',
+  Del = 'user',
+  Add = 'user',
+  Details = 'user',
+  Edit = 'user',
+  SetAvatar = 'user/setAvatar'
 }
 
 export const getUserList = (params?: CommonListParams) => {

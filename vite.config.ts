@@ -1,30 +1,27 @@
 import type { ConfigEnv, UserConfig } from 'vite'
 import { loadEnv } from 'vite'
-import path from 'path'
+import { fileURLToPath, URL } from 'node:url'
 
-import { wrapperLoadEnv, dependenciesChunks } from './build/utils'
+import { wrapperLoadViteEnv, dependenciesChunks } from './build/utils'
 import { createVitePlugins } from './build/vite/plugins'
-const pathResolve = (dir: string) => {
-  return path.resolve(__dirname, dir)
-}
 
 // https://vitejs.dev/config/
 export default ({ command, mode }: ConfigEnv): UserConfig => {
   const root = process.cwd()
   const env = loadEnv(mode, root) as LoadViteEnv
-  const viteEnv = wrapperLoadEnv(env)
+  const viteEnv = wrapperLoadViteEnv(env)
   const isBuild = command === 'build'
 
   return {
-    base: '/',
+    base: viteEnv.VITE_BASE_URL,
     server: {
       host: '0.0.0.0',
-      proxy: !viteEnv.VITE_USE_MOCK
+      proxy: viteEnv.VITE_BASE_URL_API
         ? {
-            '^/api/.*': {
+            '^/proxyApi/.*': {
               target: viteEnv.VITE_BASE_URL_API,
               changeOrigin: true,
-              rewrite: (path) => path.replace(/^\/api/, '')
+              rewrite: (path) => path.replace(/^\/proxyApi/, '')
             }
           }
         : {}
@@ -53,9 +50,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
     resolve: {
       alias: {
-        '@': pathResolve('src'),
-        '#': pathResolve('typings'),
-        '~': pathResolve('./')
+        '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
     // 编译所有应用 scss 变量的组件

@@ -1,7 +1,6 @@
-import type { StorageSetOptions } from '@/storage'
 import { defineStore } from 'pinia'
-import db from '@/storage'
-import appConfig from '@/config'
+import db, { StorageSetOptions } from '@/storage'
+import { appConfig } from '@/config'
 import router, { routesHandler } from '@/router'
 import { useRouterStore } from './router'
 import {
@@ -34,7 +33,6 @@ interface UserState {
   userPermissionMap: Map<string, boolean>
 }
 
-const $generatorMenu = appConfig.routesHandlerOptions.generatorMenu
 export const useUserStore = defineStore('user', {
   state: (): UserState => ({
     token: '',
@@ -50,14 +48,13 @@ export const useUserStore = defineStore('user', {
       this.token = db.get<string>('token') ?? this.token
       this.userInfo = db.get<UserInfo>('userInfo')
 
+      routesHandler.setupRoutes()
+
       if (!this.token) return
 
-      const promises: Promise<any>[] = [this.setUserPermissions()]
-      if (!$generatorMenu) {
-        promises.push(this.setUserMenu())
-      }
-
-      this.reloadCurrentPage(promises)
+      // this.reloadCurrentPage(
+      //   Promise.all([this.setUserPermissions(), this.setUserMenu()])
+      // )
     },
     // 设置用户菜单
     setUserMenu() {
@@ -68,6 +65,8 @@ export const useUserStore = defineStore('user', {
       }
 
       return http().then((res) => {
+        if (!res.data.length) return res
+
         if (appConfig.storeConfig.userMenuStorage && !userMenu) {
           db.set('userMenu', res.data)
         }
@@ -93,42 +92,47 @@ export const useUserStore = defineStore('user', {
         return res
       })
     },
-    // 登录
-    login(params: UserLoginParams) {
-      return userLogin(params).then(async (res) => {
-        const { data } = res
-        this.setToken(data.token, {
-          expires: appConfig.serviceTokenConfig.expires
-        })
-        this.setUserInfo(data.user)
+    async loginHandler(data: { token: string; user: UserInfo }) {
+      routesHandler.setupRoutes()
 
-        await this.setUserPermissions()
-        if (!$generatorMenu) {
-          await this.setUserMenu()
-        }
+      this.setToken(data.token, {
+        expires: appConfig.serviceTokenConfig.expires
+      })
+      this.setUserInfo(data.user)
 
-        router.push({
-          name: appConfig.routeMainName
-        })
+      // await Promise.all([this.setUserPermissions(), this.setUserMenu()])
 
-        return res
+      return router.push({
+        name: appConfig.routeMainName
       })
     },
-    // 退出登录
-    layout() {
-      db.removeKeys('token', 'userInfo', 'userPermissions')
-      this.$patch({
+    // 登录
+    async login(params: UserLoginParams) {
+      const res = await userLogin(params)
+      await this.loginHandler(res.data)
+      return res
+    },
+    // 退出登录/身份验证失败
+    logout() {
+      db.removeKeys('token', 'userInfo', 'userPermissions', 'userMenu')
+      this.setState({
         token: '',
         userInfo: null,
-        userPermissions: null
+        userPermissions: null,
+        userPermissionMap: new Map(),
+        userMenu: null
       })
 
-      if (!$generatorMenu) {
-        db.removeKeys('userMenu')
-        this.$patch({
-          userMenu: null
-        })
-      }
+      // 处理 routerStore
+      const routerStore = useRouterStore()
+      routerStore.setState({
+        keepAliveMap: new Map(),
+        routeHistoryMap: new Map()
+      })
+
+      router.push({
+        name: appConfig.routeLoginName
+      })
     },
     setState(state: Partial<UserState>, dbOptions?: StorageSetOptions) {
       this.$patch(state)
@@ -159,23 +163,21 @@ export const useUserStore = defineStore('user', {
       return !!this.userPermissionMap.get(permission)
     },
     // 重载当前页
-    reloadCurrentPage(promises: Promise<any>[]) {
-      setTimeout(() => {
-        const routerStore = useRouterStore()
-        routerStore.setState({
-          loading: true,
-          closeLoading: false
-        })
-        Promise.all(promises).then(() => {
-          router
-            .replace(location.hash ? location.hash.slice(1) : location.pathname)
-            .then(() => {
-              routerStore.setState({
-                loading: false,
-                closeLoading: true
-              })
-            })
-        })
+    async reloadCurrentPage(promise: Promise<any>) {
+      const routerStore = useRouterStore()
+      routerStore.setState({
+        loading: true,
+        closeLoading: false
+      })
+
+      await promise
+
+      const { hash, pathname } = window.location
+      await router.replace(hash ? hash.slice(1) : pathname)
+
+      routerStore.setState({
+        loading: false,
+        closeLoading: true
       })
     }
   }

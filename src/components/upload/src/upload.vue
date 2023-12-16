@@ -1,10 +1,11 @@
 <template>
   <div class="m-upload">
     <el-upload
+      v-bind="$attrs"
       :multiple="props.multiple"
       :accept="props.accept"
       :list-type="props.listType"
-      v-bind="$attrs"
+      :disabled="disabled"
       :file-list="fileList"
       :on-preview="onPreview"
       :on-remove="onRemove"
@@ -29,20 +30,14 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  UploadProps,
-  UploadRequestOptions,
-  UploadRawFile,
-  UploadFile,
-  UploadUserFile as ElUploadUserFile
-} from 'element-plus'
-import type { UploadRule } from './upload'
+import type { UploadProps as ElUploadProps } from 'element-plus'
+import type { UploadFile, UploadRule } from './upload'
 import { uploadProps, uploadEmits } from './upload'
 import { ref, watch, computed, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { api as viewerApi } from 'v-viewer'
-import { joinBaseUrlFile } from '@/utils'
 import { useProgressFake } from './hooks'
+import { cloneDeep, joinBaseUrlFile, isImageByExtname } from '@/utils'
 
 defineOptions({
   name: 'MUpload',
@@ -52,25 +47,28 @@ defineOptions({
 const props = defineProps(uploadProps)
 const emit = defineEmits(uploadEmits)
 
-const fileList = ref<ElUploadUserFile[]>([])
+const fileList = ref<UploadFile[]>([])
 
 watch(
   () => props.modelValue,
-  () => {
-    if (
-      Array.isArray(props.modelValue) &&
-      JSON.stringify(props.modelValue) !== JSON.stringify(fileList.value)
-    ) {
-      fileList.value = props.modelValue.map((item) => ({
-        name: item.filename,
-        url: joinBaseUrlFile(item.url),
-        status: 'success',
-        response: item
-      }))
+  (val) => {
+    if (fileList.value === val) {
+      return
     }
+    const modelValue = cloneDeep(val)
+    fileList.value = modelValue.map((item: any) => ({
+      ...item,
+      url: joinBaseUrlFile(item.url),
+      response: {
+        filename: item.name,
+        url: item.url,
+        ...item.response
+      }
+    }))
   },
   {
-    immediate: true
+    immediate: true,
+    deep: true
   }
 )
 
@@ -79,23 +77,40 @@ watch(
   (val) => {
     emit('update:modelValue', val)
     emit('change', val)
+  },
+  {
+    immediate: true
   }
 )
 
-const onPreview: UploadProps['onPreview'] = (uploadFile: UploadFile) => {
+const onPreview: ElUploadProps['onPreview'] = (uploadFile) => {
   if (!props.preview) {
     return
   }
 
   // onPreview
   if (props.preview !== true) {
-    props.preview(uploadFile)
+    props.preview(uploadFile as UploadFile)
     return
   }
 
-  const initialViewIndex = fileList.value.findIndex(
+  const { url, name } = uploadFile
+  if (!url) {
+    return
+  }
+
+  if (!(isImageByExtname(name) || isImageByExtname(url))) {
+    return window.open(url)
+  }
+
+  const imageFileList = fileList.value.filter(
+    ({ url, name }) => isImageByExtname(name) || isImageByExtname(url)
+  )
+
+  const initialViewIndex = imageFileList.findIndex(
     (file) => file.uid === uploadFile.uid
   )
+
   viewerApi({
     // TODO: https://github.com/fengyuanchen/viewerjs
     options: {
@@ -103,22 +118,23 @@ const onPreview: UploadProps['onPreview'] = (uploadFile: UploadFile) => {
       url: 'url',
       initialViewIndex
     },
-    images: fileList.value
+    images: imageFileList
   })
 }
 
-const onRemove: UploadProps['onRemove'] = (
-  uploadFile: UploadFile,
-  uploadFiles: UploadFile[]
-) => {
-  fileList.value = [...uploadFiles]
+const onRemove: ElUploadProps['onRemove'] = (_, uploadFiles) => {
+  fileList.value = uploadFiles as UploadFile[]
 }
 
 const isMax = computed(() => fileList.value.length >= props.max)
-const disabled = computed(() => isMax.value || props.disabled)
+const disabled = computed(() => props.disabled)
 
-const beforeUpload = (rawFile: UploadRawFile) => {
+const beforeUpload: ElUploadProps['beforeUpload'] = (rawFile) => {
   const rules: UploadRule[] = [
+    {
+      validator: () => isMax.value,
+      message: `最多上传${props.max}个文件`
+    },
     {
       validator: (file) => {
         if (props.accept === 'all') {
@@ -128,10 +144,6 @@ const beforeUpload = (rawFile: UploadRawFile) => {
         return !props.accept.includes(fileType)
       },
       message: '文件格式不符合要求'
-    },
-    {
-      validator: () => isMax.value,
-      message: `最多上传${props.max}个文件`
     },
     {
       validator: (file) => file.size > props.maxSize,
@@ -155,17 +167,14 @@ const onChange = () => {
   }
 }
 
-const httpRequest: UploadProps['httpRequest'] = (
-  options: UploadRequestOptions
-) => {
+const httpRequest: ElUploadProps['httpRequest'] = (options) => {
   const { file } = options
   // 当前文件信息
-  const fileListItem = reactive<ElUploadUserFile>({
+  const fileListItem = reactive<UploadFile>({
     name: file.name,
     url: URL.createObjectURL(file),
     status: 'uploading',
-    percentage: 0,
-    response: {}
+    percentage: 0
   })
 
   fileList.value.push(fileListItem)
@@ -188,19 +197,17 @@ const httpRequest: UploadProps['httpRequest'] = (
 
   return props
     .http(formdata)
-    .then((res) => {
-      fileListItem.name = res.data.filename
-      fileListItem.url = joinBaseUrlFile(res.data.url)
+    .then(({ data }) => {
+      fileListItem.name = data.filename
+      fileListItem.url = joinBaseUrlFile(data.url)
       fileListItem.status = 'success'
-      fileListItem.response = res.data
-      onChange()
+      fileListItem.response = data
       if (props.showMessage) {
         ElMessage.success('上传成功')
       }
     })
     .catch(() => {
       fileListItem.status = 'fail'
-      onChange()
       if (props.showMessage) {
         ElMessage.error('上传失败')
       }
@@ -209,4 +216,8 @@ const httpRequest: UploadProps['httpRequest'] = (
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.m-upload {
+  width: 100%;
+}
+</style>

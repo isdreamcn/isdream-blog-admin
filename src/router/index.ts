@@ -3,19 +3,20 @@ import {
   createWebHashHistory
   /* createWebHistory */
 } from 'vue-router'
-
-import routes from './routes'
-import useGuard from './guard'
+import { appConfig } from '@/config'
+import { basicRoutes, routes } from './routes'
+import { useRoutesHandler } from './useRoutesHandler'
 
 const router = createRouter({
-  routes,
+  routes: basicRoutes,
   history: createWebHashHistory()
-  // history: createWebHistory(import.meta.env.BASE_URL)
+  // history: createWebHistory(import.meta.env.VITE_BASE_URL)
 })
 
-useGuard(router)
+export const routesHandler = useRoutesHandler(
+  router,
+  routes,
+  appConfig.routesHandlerOptions
+)
 
 export default router
-
-export { routesHandler } from './routes'
-export type { RouteMapItem, RoleMenu } from './utils'

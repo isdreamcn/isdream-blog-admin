@@ -2,11 +2,11 @@ import type { Emoji, EmojiData, EmojiListParams } from './types/emoji.type'
 import service from '@/service'
 
 enum Api {
-  List = '/api/emoji',
-  Del = '/api/emoji',
-  Add = '/api/emoji',
-  Details = '/api/emoji',
-  Edit = '/api/emoji'
+  List = 'emoji',
+  Del = 'emoji',
+  Add = 'emoji',
+  Details = 'emoji',
+  Edit = 'emoji'
 }
 
 export const getEmojiList = (params?: EmojiListParams) => {

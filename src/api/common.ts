@@ -1,12 +1,12 @@
-import type { UploadFile } from './commonTypes'
+import type { CommonUploadFile } from './commonTypes'
 import service from '@/service'
 
 enum Api {
-  Upload = '/api/file/upload'
+  Upload = 'file/upload'
 }
 
 export const uploadCommon = (data: FormData) => {
-  return service.request<Service.Result<UploadFile>>({
+  return service.request<Service.Result<CommonUploadFile>>({
     url: Api.Upload,
     method: 'POST',
     headers: {

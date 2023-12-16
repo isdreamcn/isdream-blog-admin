@@ -2,9 +2,9 @@ import type { CommentListParams, Comment } from './types/comment.type'
 import service from '@/service'
 
 enum Api {
-  List = '/api/comment',
-  Approve = '/api/comment/approve',
-  Del = '/api/comment'
+  List = 'comment',
+  Approve = 'comment/approve',
+  Del = 'comment'
 }
 
 export const getCommentList = (params?: CommentListParams) => {

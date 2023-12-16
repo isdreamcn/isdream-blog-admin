@@ -1,7 +1,7 @@
 <template>
   <el-menu
-    :default-active="routePath"
     class="menu-container"
+    :default-active="routePath"
     :collapse="collapsed"
     :mode="mode"
   >
@@ -31,7 +31,7 @@ const collapsed = computed(() => appStore.appSetting.menu.collapsed)
 const mode = computed(() => appStore.appSetting.menu.mode)
 
 const userStore = useUserStore()
-const menu = userStore.userMenu || []
+const menu = computed(() => userStore.userMenu || [])
 
 const clickMenuItem = (item: UserMenu) => {
   if (item.link) {
@@ -46,7 +46,7 @@ const clickMenuItem = (item: UserMenu) => {
 
 <style lang="scss" scoped>
 .el-menu {
-  flex: 1;
+  height: 100%;
 }
 .menu-container:not(.el-menu--collapse) {
   width: 200px;

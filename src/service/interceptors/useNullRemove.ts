@@ -1,4 +1,4 @@
-import type { RequestInterceptors } from '../types'
+import type { ServiceInterceptors } from '../service'
 
 const removeNull = (data?: Record<string, any>) => {
   if (!data || Object.prototype.toString.call(data) === '[object FormData]') {
@@ -14,7 +14,7 @@ const removeNull = (data?: Record<string, any>) => {
   return _data
 }
 
-export const useNullRemove = (): RequestInterceptors => {
+export const useNullRemove = (): ServiceInterceptors => {
   return {
     requestInterceptor(config) {
       if (config.method === 'get') {

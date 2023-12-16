@@ -1,4 +1,4 @@
-import type { TableColumns, FormFields } from '@/components'
+import type { TableColumn, FormFields } from '@/components'
 
 export const fields: FormFields = [
   {
@@ -14,11 +14,11 @@ export const fields: FormFields = [
       options: [
         {
           label: '待审核',
-          value: false
+          value: 1
         },
         {
           label: '已通过',
-          value: true
+          value: 2
         }
       ],
       clearable: true
@@ -26,7 +26,7 @@ export const fields: FormFields = [
   }
 ]
 
-export const columns: TableColumns = [
+export const columns: TableColumn[] = [
   {
     key: 'content',
     label: '留言内容'

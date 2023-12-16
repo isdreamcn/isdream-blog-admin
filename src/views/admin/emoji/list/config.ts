@@ -1,4 +1,4 @@
-import type { TableColumns, FormFields } from '@/components'
+import type { TableColumn, FormFields } from '@/components'
 import type { EmojiData } from '@/api/admin/emoji'
 import { reactive } from 'vue'
 
@@ -18,7 +18,7 @@ export const fields = reactive<FormFields>([
   }
 ])
 
-export const columns: TableColumns = [
+export const columns: TableColumn[] = [
   {
     key: 'file',
     label: '表情',

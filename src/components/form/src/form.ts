@@ -1,47 +1,59 @@
 import type Form from './form.vue'
-import type { GlobalComponents } from '@/plugins/components/components'
+import type { GlobalComponents } from '@/plugins/components'
 import type { FormComponents } from './components'
 import type { ExtractPropTypes, Component } from 'vue'
 import type {
-  ColProps,
+  ColSize,
   FormItemRule,
   FormInstance as ElFormInstance
 } from 'element-plus'
-import { buildProps, definePropType, isObject } from '@/utils'
+import { buildProps, definePropType, isObject, isNil } from '@/utils'
 
-export interface FormFieldAttrsOptions {
+export interface FormFieldOptions {
   label: string
-  value: string | number | boolean
+  value: string | number
   disabled?: boolean
 }
 
-export interface FormPropsField<T = string> {
+export interface FormField<T = string> {
   tag: GlobalComponents | FormComponents | Component
   key: T
   label?: string
   // show !== false 则显示
   show?: boolean
   slot?: boolean
-  attrs?: { options?: FormFieldAttrsOptions[]; [key: string]: any }
+  attrs?: {
+    options?: FormFieldOptions[]
+    placeholder?: string
+    disabled?: boolean
+    [key: string]: any
+  }
   on?: Record<string, (...payload: any[]) => void>
-  colAttrs?: number | ColProps
-  placeholder?: string
+  colAttrs?: ColSize
+  required?: boolean
   validateRules?: FormItemRule[]
 }
 
 export const formProps = buildProps({
   fields: {
-    type: definePropType<FormPropsField[]>(Array),
+    type: definePropType<FormField[]>(Array),
     required: true
   },
-  modelValue: Object,
+  modelValue: {
+    type: Object,
+    default: () => ({})
+  },
   labelWidth: {
-    type: Number,
-    default: 100
+    type: definePropType<number | string>([Number, String]),
+    default: 'auto'
   },
   colAttrs: {
-    type: definePropType<number | ColProps>([Number, Object]),
+    type: definePropType<ColSize>([Number, Object]),
     default: 6
+  },
+  disabled: {
+    type: Boolean,
+    default: false
   },
   // 按钮放入col
   inline: {
@@ -53,27 +65,28 @@ export const formProps = buildProps({
     type: Boolean,
     default: false
   },
-  // 防抖
-  debounce: {
-    type: Boolean,
-    default: true
-  },
   submitText: String,
   cancelText: String,
-  submitIcon: String,
-  cancelIcon: String
+  submitIcon: {
+    type: definePropType<string | false>([String, Boolean]),
+    default: undefined
+  },
+  cancelIcon: {
+    type: definePropType<string | false>([String, Boolean]),
+    default: undefined
+  }
 } as const)
 
 export const formEmits = {
   'update:modelValue': (formData: Record<string, any>) => isObject(formData),
   submit: (formData: Record<string, any>) => isObject(formData),
   cancel: (formData: Record<string, any>) => isObject(formData),
-  getForm: (elFormRef: ElFormInstance) => !!elFormRef
+  getForm: (elFormRef: ElFormInstance) => !isNil(elFormRef)
 }
 
 export type FormProps = ExtractPropTypes<typeof formProps>
 export type FormEmits = typeof formEmits
 
-export type FormFields<T = string> = FormPropsField<T>[]
+export type FormFields<T = string> = FormField<T>[]
 
 export type FormInstance = InstanceType<typeof Form>

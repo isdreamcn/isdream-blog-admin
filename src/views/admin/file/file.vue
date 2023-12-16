@@ -20,7 +20,10 @@
       </template>
 
       <template #url="{ value, row }">
-        <MViewFile :src="value" :mimeType="row.mimeType"></MViewFile>
+        <MViewFile
+          :src="filePathQuery(value, { w: 100, f: 'webp' })"
+          :mimeType="row?.mimeType"
+        ></MViewFile>
       </template>
 
       <template #createdAt="{ value }">
@@ -45,6 +48,7 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import { filePathQuery } from '@/utils'
 import { columns, fields, dialogFields } from './config'
 import { getFileList, fileDel } from '@/api/admin/file'
 

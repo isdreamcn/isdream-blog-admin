@@ -1,20 +1,16 @@
 import type Editor from './editor.vue'
 import type { ExtractPropTypes } from 'vue'
-import type { RawEditorSettings } from 'tinymce'
-import { buildProps, definePropType } from '@/utils'
-import { uploadCommon } from '@/api/common'
+import { Editor as TinymceEditor, RawEditorSettings } from 'tinymce'
+import { buildProps, definePropType, isNil, isString } from '@/utils'
 import { toolbar, plugins } from './tinymce/tinymce'
+import { uploadCommon } from '@/api/common'
 
-export type EditorUpload = (formData: FormData) => Promise<{
-  data: {
-    url: string
-  }
-}>
+type EditorUpload = typeof uploadCommon
 
 export const editorProps = buildProps({
   options: {
     type: definePropType<Partial<RawEditorSettings>>(Object),
-    default: {}
+    default: () => ({})
   },
   modelValue: {
     type: String,
@@ -34,6 +30,7 @@ export const editorProps = buildProps({
   },
   height: {
     type: definePropType<string | number>([Number, String]),
+    required: false,
     default: 400
   },
   upload: {
@@ -45,13 +42,12 @@ export const editorProps = buildProps({
     default: 'file'
   }
 } as const)
+
 export const editorEmits = {
-  change: (content: string) => typeof content === 'string',
-  'update:modelValue': (content: string) => typeof content === 'string',
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  inited: (val: any) => true,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  'init-error': (err: any) => true
+  change: (content: string) => isString(content),
+  'update:modelValue': (content: string) => isString(content),
+  inited: (editor: TinymceEditor) => editor instanceof TinymceEditor,
+  'init-error': (err: any) => !isNil(err)
 }
 
 export type EditorProps = ExtractPropTypes<typeof editorProps>

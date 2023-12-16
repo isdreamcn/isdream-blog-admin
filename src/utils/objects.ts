@@ -1,4 +1,4 @@
-import { isArray, isObject, hasOwn } from './index'
+import { isArray, isObject, hasOwn } from './plugins'
 
 interface MergeObjOptions {
   deep: boolean

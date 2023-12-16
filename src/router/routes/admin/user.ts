@@ -1,9 +1,9 @@
 import type { RouteRecordRaw } from 'vue-router'
 
 export default {
-  path: 'user',
+  path: 'userInfo',
   meta: {
-    title: '用户',
+    title: '用户信息',
     icon: 'icon-user',
     sort: 2
   },

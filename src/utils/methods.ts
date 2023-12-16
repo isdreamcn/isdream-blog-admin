@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/store'
 
 // 组合函数
 type ComposeFn<T = any> = (payload: T) => T
@@ -11,27 +12,16 @@ export const composeFns = <T = any>(
   const length = fns.length
 
   return (payload) => {
-    let result = length ? fns[0](payload) : payload
-    if (pause && pause(result)) {
-      return result
-    }
+    let result = payload
     let index = 0
-    while (++index < length) {
-      result = fns[index](result)
+    while (index < length) {
+      result = fns[index++](result)
       if (pause && pause(result)) {
         return result
       }
     }
 
     return result
-  }
-}
-
-// 处理env
-export const wrapperImportMetaEnv = (env: ImportMetaEnv): ViteEnv => {
-  return {
-    ...env,
-    VITE_USE_MOCK: env.VITE_USE_MOCK === 'true' ? true : false
   }
 }
 
@@ -61,4 +51,12 @@ export const verifyObj = (
     }
   }
   return true
+}
+
+// 权限校验
+export const checkAuth = (permission: string) => {
+  // 权限数据不完善，暂时不进行权限判断
+  // return true
+  const userStore = useUserStore()
+  return userStore.permissionAuth(permission)
 }

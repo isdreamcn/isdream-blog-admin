@@ -1,26 +1,22 @@
 <template>
   <el-dialog
     class="m-form-dialog"
+    v-bind="$attrs"
     v-model="visible"
     :title="title"
     @close="cancel"
   >
     <MForm
       :fields="props.fields"
+      :disabled="props.disabled"
       :model-value="formData"
       :inline="false"
       :col-attrs="24"
       :loading="loading"
-      :debounce="false"
-      v-bind="$attrs"
       @getForm="getForm"
       @submit="submit"
       @cancel="cancel"
-    >
-      <template #buttons>
-        <slot name="buttons"></slot>
-      </template>
-    </MForm>
+    ></MForm>
   </el-dialog>
 </template>
 
@@ -38,26 +34,49 @@ defineOptions({
 const props = defineProps(formDialogProps)
 const emit = defineEmits(formDialogEmits)
 
-const title = computed(() => (props.id ? props.editTitle : props.addTitle))
+const title = computed(() =>
+  props.disabled
+    ? props.disabledTitle
+    : props.id
+    ? props.editTitle
+    : props.addTitle
+)
 const loading = ref(false)
 const visible = ref(props.modelValue)
 
-// elFormRef
-let elFormRef: FormInstance | undefined = undefined
+let elFormRef: Nullable<FormInstance> = null
 const getForm = (form: FormInstance) => {
   elFormRef = form
 }
 
 const formData = ref({})
+watch(
+  () => props.value,
+  (val) => {
+    formData.value = props.getHandler(
+      cloneDeep({
+        ...formData.value,
+        ...val
+      })
+    )
+  },
+  {
+    deep: true
+  }
+)
+
 const init = () => {
   visible.value = true
   const value = cloneDeep(props.value)
   if (props.id) {
     props.httpGet(props.id).then((res) => {
-      formData.value = props.getHandler({ ...value, ...res })
+      formData.value = props.getHandler({
+        ...value,
+        ...(res?.data || res)
+      })
     })
   } else {
-    formData.value = value
+    formData.value = props.getHandler(value)
   }
 }
 
@@ -73,13 +92,13 @@ const cancel = () => {
 const submit = (formData: Record<string, any>) => {
   formData = props.handler(formData)
   loading.value = true
-  let request = null
+  let requestRes: Promise<any>
   if (props.id) {
-    request = props.httpEdit(props.id, formData)
+    requestRes = props.httpEdit(props.id, formData)
   } else {
-    request = props.httpAdd(formData)
+    requestRes = props.httpAdd(formData)
   }
-  request
+  requestRes
     .then(() => {
       cancel()
       emit('reload')

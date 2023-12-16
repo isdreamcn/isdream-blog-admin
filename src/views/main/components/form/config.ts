@@ -1,23 +1,19 @@
-import { FormFields } from '@/components'
+import type { FormField } from '@/components'
 import { reactive } from 'vue'
 
-export const fields: FormFields = reactive([
+export const fields = reactive<FormField[]>([
   {
     tag: 'ElInput',
     key: 'name',
     label: '姓名',
-    validateRules: [
-      {
-        required: true,
-        message: '请输入姓名',
-        trigger: 'change'
-      }
-    ]
+    required: true,
+    colAttrs: 12
   },
   {
     tag: 'ElDatePicker',
     key: 'date',
     label: '日期',
+    colAttrs: 12,
     attrs: {
       // disabled: true
     }
@@ -56,11 +52,8 @@ export const fields: FormFields = reactive([
         },
         {
           label: 'Option 2',
-          value: 2
-        },
-        {
-          label: 'Option 3',
-          value: 3
+          value: 2,
+          disabled: true
         }
       ]
     }
@@ -78,13 +71,13 @@ export const fields: FormFields = reactive([
         {
           label: 'Option 2',
           value: 2
-        },
-        {
-          label: 'Option 3',
-          value: 3,
-          disabled: true
         }
       ]
     }
+  },
+  {
+    tag: 'MUpload',
+    key: 'files',
+    label: '附件'
   }
 ])

@@ -42,15 +42,26 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { columns, fields } from './config'
-import { getCommentList, CommentApprove, CommentDel } from '@/api/admin/comment'
+import {
+  getCommentList as getCommentListHttp,
+  CommentApprove,
+  CommentDel
+} from '@/api/admin/comment'
 
 defineOptions({
   name: 'Comment'
 })
 
+const getCommentList = (params: any) => {
+  return getCommentListHttp({
+    ...params,
+    approved: params.approved === 2
+  })
+}
+
 // 搜索
 const params = ref<any>({
-  approved: false
+  approved: 1
 })
 const search = (data: any) => {
   params.value = {

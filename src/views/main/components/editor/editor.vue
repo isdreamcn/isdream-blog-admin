@@ -1,16 +1,17 @@
 <template>
   <div>
     <p>{{ content }}</p>
-    <MEditor
-      v-model="content"
-      :upload="upload"
-      @mouseDown="mouseDown"
-    ></MEditor>
+    <div class="btns">
+      <ElButton @click="setContent" type="primary">修改content</ElButton>
+    </div>
+    <MEditor v-model="content" @mouseDown="mouseDown"></MEditor>
+
+    <MMarkdownView :value="readme"></MMarkdownView>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { EditorUpload } from '@/components'
+import readme from '@/components/editor/README.md?raw'
 import { ref } from 'vue'
 
 defineOptions({
@@ -18,25 +19,17 @@ defineOptions({
 })
 
 const content = ref('123')
+const setContent = () => {
+  content.value += 'abc'
+}
 
 const mouseDown = () => {
   console.log('mouseDown')
 }
-
-const upload: EditorUpload = (formData: FormData) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const bold = formData.get('file')!
-      if (typeof bold !== 'string') {
-        resolve({
-          data: {
-            url: URL.createObjectURL(bold)
-          }
-        })
-      }
-    }, 300)
-  })
-}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.btns {
+  margin-bottom: 20px;
+}
+</style>

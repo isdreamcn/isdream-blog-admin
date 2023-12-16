@@ -1,30 +1,40 @@
-import { BasicRequest } from './basicRequest'
+import { createService } from './service'
 import config from '@/config'
 
 import {
-  useHandleUrl,
   useSetupToken,
   useHandleError,
   useLoading,
   useNullRemove
 } from './interceptors'
-import { mergeInterceptors } from './utils'
 
-export const serviceBaseURL =
-  config.useMock || import.meta.env.DEV ? '/' : config.baseUrlApi
+export const service = createService({
+  baseURL: import.meta.env.DEV ? '/proxyApi/' : config.baseUrlApi
+})
 
-export const service = new BasicRequest({
-  baseURL: serviceBaseURL,
-  interceptors: mergeInterceptors([
-    useHandleUrl(config.useMock),
+export const mockService = createService({
+  baseURL: '/mockApi/'
+})
+
+export const useServiceInterceptors = () => {
+  // 共同控制loading
+  const loading = useLoading()
+
+  service.useInterceptors([
     useSetupToken(config.serviceTokenConfig),
     useNullRemove(),
-    useLoading(),
+    loading,
     useHandleError()
   ])
-})
+  mockService.useInterceptors([
+    useSetupToken(config.serviceTokenConfig),
+    useNullRemove(),
+    loading,
+    useHandleError()
+  ])
+}
 
 export default service
 
-export * from './types'
+export type * from './service'
 export type { ServiceTokenConfig } from './interceptors/index'

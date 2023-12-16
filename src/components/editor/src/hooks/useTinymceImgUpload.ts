@@ -1,6 +1,5 @@
 import type { EditorProps } from '../editor'
 import type { RawEditorSettings } from 'tinymce'
-import { joinBaseUrlFile } from '@/utils'
 
 export const useTinymceImgUpload = (props: EditorProps) => {
   const handleImgUpload: RawEditorSettings['images_upload_handler'] = (
@@ -22,7 +21,7 @@ export const useTinymceImgUpload = (props: EditorProps) => {
     props
       .upload(formData)
       .then((res) => {
-        success(joinBaseUrlFile(res.data.url))
+        success(res.data.url)
       })
       .catch(() => {
         failure('上传失败')

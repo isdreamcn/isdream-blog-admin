@@ -2,7 +2,7 @@
 // TODO: https://ld246.com/article/1549638745630#CDN-切换
 
 export const useVditorCDN = () => {
-  const cdn = 'https://cdn.isdream.cn/vditor@3.9.6'
+  const cdn = 'https://cdn.jsdelivr.net/npm/vditor@3.9.6'
   return {
     cdn,
     themePath: `${cdn}/dist/css/content-theme`,

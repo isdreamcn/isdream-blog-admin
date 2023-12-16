@@ -3,8 +3,8 @@ import type { CommonListParams } from '../commonTypes'
 import service from '@/service'
 
 enum Api {
-  List = '/api/file',
-  Del = '/api/file'
+  List = 'file',
+  Del = 'file'
 }
 
 export const getFileList = (params?: CommonListParams) => {
