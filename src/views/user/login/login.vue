@@ -23,10 +23,14 @@
             <el-button type="primary" :loading="loginLoading" @click="login"
               >登 录</el-button
             >
-            <p class="signup">
+            <el-button class="isdream-login" @click="oauthLoginTo">
+              <img src="https://account.isdream.cn/favicon.ico" alt="" />
+              主站账号登录
+            </el-button>
+            <!-- <p class="signup">
               没有账户?
               <a href="#" @click="toggleForm">注册</a>
-            </p>
+            </p> -->
           </form>
         </div>
       </div>
@@ -82,6 +86,8 @@ import config from '@/config'
 
 import { useLogin } from './hooks/useLogin'
 import { useSignin } from './hooks/useSignin'
+import { useOAuthLogin } from './hooks/useOAuthLogin'
+
 defineOptions({
   name: config.routeLoginName
 })
@@ -93,6 +99,9 @@ const toggleForm = () => {
 
 const { loginLoading, loginForm, login } = useLogin()
 const { signinLoading, signinForm, signin } = useSignin(toggleForm)
+const { oauthLoginTo, oauthLogin } = useOAuthLogin()
+
+oauthLogin()
 </script>
 
 <style scoped lang="scss">

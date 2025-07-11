@@ -1,12 +1,14 @@
 import type {
   UserLoginMenu,
   UserLoginParams,
+  UserOAuthLoginParams,
   UserLoginResult
 } from './types/login.type'
 import service, { mockService } from '@/service'
 
 enum Api {
   Login = 'user/admin/login',
+  OAuthLogin = 'user/admin/oauth_login',
   Signin = 'user/signin',
   Logout = 'user/logout',
   Menu = 'user/menu',
@@ -16,6 +18,14 @@ enum Api {
 export const userLogin = (data: UserLoginParams) => {
   return service.request<Service.Result<UserLoginResult>>({
     url: Api.Login,
+    method: 'POST',
+    data
+  })
+}
+
+export const userOAuthLogin = (data: UserOAuthLoginParams) => {
+  return service.request<Service.Result<UserLoginResult>>({
+    url: Api.OAuthLogin,
     method: 'POST',
     data
   })

@@ -3,6 +3,11 @@ export interface UserLoginParams {
   password: string
 }
 
+export interface UserOAuthLoginParams {
+  code: string
+  code_verifier: string
+}
+
 export interface UserLoginMenu {
   id?: number
   title?: string

@@ -5,7 +5,9 @@ import router, { routesHandler } from '@/router'
 import { useRouterStore } from './router'
 import {
   UserLoginParams,
+  UserOAuthLoginParams,
   userLogin,
+  userOAuthLogin,
   getUserMenu,
   getUserPermissions
 } from '@/api/user/login'
@@ -109,6 +111,12 @@ export const useUserStore = defineStore('user', {
     // 登录
     async login(params: UserLoginParams) {
       const res = await userLogin(params)
+      await this.loginHandler(res.data)
+      return res
+    },
+    // oauth 登录
+    async oauthLogin(params: UserOAuthLoginParams) {
+      const res = await userOAuthLogin(params)
       await this.loginHandler(res.data)
       return res
     },
