@@ -99,9 +99,9 @@ const toggleForm = () => {
 
 const { loginLoading, loginForm, login } = useLogin()
 const { signinLoading, signinForm, signin } = useSignin(toggleForm)
-const { oauthLoginTo, oauthLogin } = useOAuthLogin()
+const { oauthLoginTo, oauthLoginCallback } = useOAuthLogin()
 
-oauthLogin()
+oauthLoginCallback()
 </script>
 
 <style scoped lang="scss">

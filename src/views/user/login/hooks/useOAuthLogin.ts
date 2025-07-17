@@ -1,103 +1,145 @@
+// useOAuthLogin.ts
 import { useUserStore } from '@/store'
 
-// 生成安全的 state 参数
-function generateState(length = 32) {
-  const array = new Uint8Array(length)
-  window.crypto.getRandomValues(array)
-  return btoa(String.fromCharCode(...array))
-    .replace(/\+/g, '-')
+// ---------- 工具函数 ----------
+/** 生成随机 Base64URL 字符串（不截断，长度固定） */
+function base64URLEncode(buffer: Uint8Array) {
+  let binary = ''
+  for (let i = 0; i < buffer.length; i++) {
+    binary += String.fromCharCode(buffer[i])
+  }
+  return btoa(binary)
+    .replace(/\+/g, '-') // URL安全字符替换
     .replace(/\//g, '_')
-    .replace(/=/g, '')
-    .slice(0, Math.ceil((length * 4) / 3)) // 精确长度控制
+    .replace(/=/g, '') // 移除填充
 }
 
-// 生成安全的随机字符串 (Base64URL)
-function generateCodeVerifier(length = 43) {
-  const array = new Uint8Array(length)
-  window.crypto.getRandomValues(array)
-  return btoa(String.fromCharCode(...array))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '')
-    .substring(0, length)
+/** 生成 state（默认 32 字节 => 43 字符） */
+function generateState(lenBytes = 32) {
+  // 验证长度有效性
+  if (lenBytes < 1) throw new Error('lenBytes must be at least 1')
+
+  const bytes = new Uint8Array(lenBytes)
+  window.crypto.getRandomValues(bytes) // 使用密码学安全随机数
+  return base64URLEncode(bytes)
 }
 
-const viteEnv = import.meta.env
-
-// 生成 code_challenge (S256 方法)
-async function generateCodeChallenge(verifier: string) {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(verifier)
-  const digest = await window.crypto.subtle.digest('SHA-256', data)
-
-  return btoa(String.fromCharCode(...new Uint8Array(digest)))
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '')
-}
-
-export const useOAuthLogin = () => {
-  const oauthLoginTo = async () => {
-    const state = generateState()
-    const code_verifier = generateCodeVerifier()
-    const code_challenge = await generateCodeChallenge(code_verifier)
-
-    const data = {
-      client_id: viteEnv.VITE_OAUTH_CLIENT_ID,
-      scope: 'openid profile',
-      response_type: 'code',
-      redirect_uri: viteEnv.VITE_OAUTH_REDIRECT_URI,
-      code_challenge,
-      state
-    }
-
-    const url =
-      `https://api.account.isdream.cn/oidc/auth?` +
-      `client_id=${data.client_id}&` +
-      `redirect_uri=${data.redirect_uri}&` +
-      `scope=${data.scope}&` +
-      `response_type=${data.response_type}&` +
-      `code_challenge=${data.code_challenge}&` +
-      `code_challenge_method=S256&` +
-      `state=${data.state}`
-
-    sessionStorage.setItem('code_verifier', code_verifier)
-    sessionStorage.setItem('state', state)
-
-    location.href = url
+/** 生成 code_verifier（43-128 字符，默认 43） */
+function generateCodeVerifier(lenBytes = 32) {
+  // 根据 RFC 7636 验证字节长度范围
+  if (lenBytes < 32 || lenBytes > 96) {
+    throw new Error('lenBytes must be between 32 and 96 (inclusive)')
   }
 
+  const bytes = new Uint8Array(lenBytes)
+  window.crypto.getRandomValues(bytes)
+  return base64URLEncode(bytes)
+}
+
+/** 生成 code_challenge (S256) */
+async function generateCodeChallenge(verifier: string) {
+  // 验证输入长度符合 PKCE 规范
+  if (verifier.length < 43 || verifier.length > 128) {
+    throw new Error('Verifier must be 43-128 characters')
+  }
+
+  const encoder = new TextEncoder()
+  const data = encoder.encode(verifier) // UTF-8 编码
+  const digest = await window.crypto.subtle.digest('SHA-256', data)
+  return base64URLEncode(new Uint8Array(digest)) // 哈希后Base64URL编码
+}
+
+// ---------- 主 Hook ----------
+export const useOAuthLogin = () => {
+  // 跳转授权页
+  const oauthLoginTo = async () => {
+    const VITE_OAUTH_CLIENT_ID = import.meta.env.VITE_OAUTH_CLIENT_ID
+    const VITE_OAUTH_REDIRECT_URI = import.meta.env.VITE_OAUTH_REDIRECT_URI
+
+    if (!VITE_OAUTH_CLIENT_ID) {
+      console.log('oauthLoginTo: 缺少 VITE_OAUTH_CLIENT_ID')
+      return
+    }
+    if (!VITE_OAUTH_REDIRECT_URI) {
+      console.log('oauthLoginTo: 缺少 VITE_OAUTH_REDIRECT_URI')
+      return
+    }
+
+    try {
+      const state = generateState()
+      const codeVerifier = generateCodeVerifier()
+      const codeChallenge = await generateCodeChallenge(codeVerifier)
+
+      // 存储到 sessionStorage（兼容隐私模式）
+      try {
+        sessionStorage.setItem('oauth_state', state)
+        sessionStorage.setItem('oauth_code_verifier', codeVerifier)
+      } catch {
+        alert('浏览器隐私模式可能导致登录异常，请关闭隐私模式后重试。')
+        return
+      }
+
+      // 构造 URL（使用 URLSearchParams 防止编码问题）
+      const url = new URL('https://api.account.isdream.cn/oidc/auth')
+      Object.entries({
+        client_id: VITE_OAUTH_CLIENT_ID,
+        redirect_uri: VITE_OAUTH_REDIRECT_URI,
+        scope: 'openid profile',
+        response_type: 'code',
+        code_challenge: codeChallenge,
+        code_challenge_method: 'S256',
+        state,
+        prompt: 'consent'
+      }).forEach(([k, v]) => url.searchParams.set(k, v))
+
+      location.href = url.toString()
+    } catch (err) {
+      console.error('跳转授权页失败：', err)
+      alert('跳转失败，请稍后重试')
+    }
+  }
+
+  // 处理回调：校验参数 + 换 token
   const oauthLoginVerify = () => {
     return new Promise<{
       code: string
       code_verifier: string
     }>((resolve, reject) => {
-      const code_verifier = sessionStorage.getItem('code_verifier')
-      const state = sessionStorage.getItem('state')
+      const params = new URLSearchParams(location.search)
+      const code = params.get('code')
+      const state = params.get('state')
 
-      // `location.search` 得到url中?之后#之前的部分
-      const searchParams = new URLSearchParams(location.search)
-      const code = searchParams.get('code')
+      const storedState = sessionStorage.getItem('oauth_state')
+      const codeVerifier = sessionStorage.getItem('oauth_code_verifier')
 
-      if (!code) return reject('code获取不到')
-      if (!code_verifier) return reject('code_verifier获取不到')
-      if (state !== searchParams.get('state')) return reject('state发生变更')
+      // 清理 sessionStorage
+      sessionStorage.removeItem('oauth_state')
+      sessionStorage.removeItem('oauth_code_verifier')
+
+      // 基础校验
+      if (!code) return reject('授权失败：缺少 code')
+      if (!codeVerifier) return reject('本地数据丢失，请重新登录')
+      if (!storedState || state !== storedState)
+        return reject('state 校验失败，疑似 CSRF')
 
       resolve({
-        code,
-        code_verifier
+        code: code,
+        code_verifier: codeVerifier
       })
     })
   }
 
-  const oauthLogin = () => {
-    oauthLoginVerify().then((res) => {
-      useUserStore().oauthLogin(res)
-    })
+  // 处理回调：换 token
+  const oauthLoginCallback = () => {
+    oauthLoginVerify()
+      .then((res) => {
+        useUserStore().oauthLogin(res)
+      })
+      .catch((err) => {
+        console.log('登录失败')
+        console.log(err)
+      })
   }
 
-  return {
-    oauthLoginTo,
-    oauthLogin
-  }
+  return { oauthLoginTo, oauthLoginCallback }
 }
