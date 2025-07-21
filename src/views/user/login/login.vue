@@ -24,7 +24,7 @@
               >登 录</el-button
             >
             <el-button class="isdream-login" @click="oauthLoginTo">
-              <img src="https://account.isdream.cn/favicon.ico" alt="" />
+              <img :src="FAVICON_URL" alt="" />
               主站账号登录
             </el-button>
             <!-- <p class="signup">
@@ -83,10 +83,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import config from '@/config'
+import { useUserStore } from '@/store'
 
 import { useLogin } from './hooks/useLogin'
 import { useSignin } from './hooks/useSignin'
-import { useOAuthLogin } from './hooks/useOAuthLogin'
+import { FAVICON_URL, useCodeLogin } from 'isdream-oauth'
 
 defineOptions({
   name: config.routeLoginName
@@ -99,9 +100,19 @@ const toggleForm = () => {
 
 const { loginLoading, loginForm, login } = useLogin()
 const { signinLoading, signinForm, signin } = useSignin(toggleForm)
-const { oauthLoginTo, oauthLoginCallback } = useOAuthLogin()
+const { oauthLoginTo, oauthLoginCallback } = useCodeLogin({
+  client_id: import.meta.env.VITE_OAUTH_CLIENT_ID!,
+  redirect_uri: import.meta.env.VITE_OAUTH_REDIRECT_URI!
+})
 
 oauthLoginCallback()
+  .then((res) => {
+    useUserStore().oauthLogin(res)
+  })
+  .catch((err) => {
+    console.log('登录失败')
+    console.log(err)
+  })
 </script>
 
 <style scoped lang="scss">
