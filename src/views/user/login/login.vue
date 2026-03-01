@@ -3,7 +3,7 @@
     <div :class="{ container: true, active: active }">
       <div class="user signinBx">
         <div class="imgBx">
-          <img src="@/assets/img/1.jpg" alt="" />
+          <img src="@/assets/img/1.webp" alt="" />
         </div>
         <div class="formBx">
           <form>
@@ -73,7 +73,7 @@
           </form>
         </div>
         <div class="imgBx">
-          <img src="@/assets/img/2.jpg" alt="" />
+          <img src="@/assets/img/2.webp" alt="" />
         </div>
       </div>
     </div>

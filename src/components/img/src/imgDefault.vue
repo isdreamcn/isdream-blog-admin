@@ -11,8 +11,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import mainImg from '@/assets/img/main.png'
-import mainImgThumb from '@/assets/img/main-thumb.png'
+import mainImg from '@/assets/img/main.webp'
+import mainImgThumb from '@/assets/img/main-thumb.webp'
 import { imgProps } from './img'
 import app from '@/config'
 
