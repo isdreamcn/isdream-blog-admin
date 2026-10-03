@@ -2,6 +2,14 @@
   <div>
     <MForm :fields="fields" @submit="search" @cancel="search"></MForm>
 
+    <el-alert
+      class="file-alert"
+      type="info"
+      :closable="false"
+      show-icon
+      title="文章正文配图经 media-api 转存供给，不在此列表；封面/表情暂仍走本地上传"
+    ></el-alert>
+
     <MTable
       :columns="columns"
       :http="getFileList"
@@ -95,4 +103,8 @@ const del = (id: number) => {
 dialogFields.find((v) => v.key === 'file')!.on!.change = reload
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.file-alert {
+  margin-bottom: 20px;
+}
+</style>

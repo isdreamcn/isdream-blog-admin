@@ -2,9 +2,9 @@ import type Markdown from './markdown.vue'
 import type { ExtractPropTypes } from 'vue'
 import Vditor from 'vditor'
 import { buildProps, definePropType, isString } from '@/utils'
-import { uploadCommon } from '@/api/common'
+import { uploadMediaCommon } from '@/api/common'
 
-type MarkdownUpload = typeof uploadCommon
+type MarkdownUpload = typeof uploadMediaCommon
 
 export const markdownProps = buildProps({
   options: {
@@ -17,7 +17,7 @@ export const markdownProps = buildProps({
   },
   upload: {
     type: definePropType<MarkdownUpload | false>([Function, Boolean]),
-    default: () => uploadCommon
+    default: () => uploadMediaCommon
   },
   uploadFileKey: {
     type: String,
