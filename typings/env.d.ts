@@ -14,6 +14,7 @@ type DefineEnv = Readonly<{
 
   VITE_OAUTH_CLIENT_ID?: string
   VITE_OAUTH_REDIRECT_URI?: string
+  VITE_OAUTH_URL?: string
 }>
 
 // loadEnv(mode, process.cwd()) || import.meta.env

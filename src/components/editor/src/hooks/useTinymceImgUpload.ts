@@ -23,8 +23,10 @@ export const useTinymceImgUpload = (props: EditorProps) => {
       .then((res) => {
         success(res.data.url)
       })
-      .catch(() => {
-        failure('上传失败')
+      .catch((err: any) => {
+        // 透传后端 message(如 415 白名单外格式),其余错误(含响应结构异常的
+        // TypeError)兜底统一文案,不给编辑器抛原生错误噪音
+        failure(err?.response?.data?.message || '上传失败')
       })
   }
 

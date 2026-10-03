@@ -102,7 +102,8 @@ const { loginLoading, loginForm, login } = useLogin()
 const { signinLoading, signinForm, signin } = useSignin(toggleForm)
 const { oauthLoginTo, oauthLoginCallback } = useCodeLogin({
   client_id: import.meta.env.VITE_OAUTH_CLIENT_ID!,
-  redirect_uri: import.meta.env.VITE_OAUTH_REDIRECT_URI!
+  redirect_uri: import.meta.env.VITE_OAUTH_REDIRECT_URI!,
+  oauthUrl: import.meta.env.VITE_OAUTH_URL || undefined
 })
 
 oauthLoginCallback()

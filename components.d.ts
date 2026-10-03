@@ -16,6 +16,7 @@ declare module '@vue/runtime-core' {
     DeleteButton: typeof import('./src/components/deleteButton/src/deleteButton.vue')['default']
     Demo: typeof import('./src/components/demo/src/demo.vue')['default']
     Editor: typeof import('./src/components/editor/src/editor.vue')['default']
+    ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
