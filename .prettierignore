@@ -8,3 +8,6 @@ pnpm-lock.yaml
 **/*.sh
 
 /public/*
+
+# lottie 动画等资源 JSON 不做格式化（单行展开成数万行 diff）
+src/assets/**/*.json
