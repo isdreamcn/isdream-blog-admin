@@ -32,23 +32,22 @@ export const dateFormat = (
   }
 }
 
-const FileFormat = [
-  'jpeg',
-  'png',
-  'webp',
-  'gif',
-  'jp2',
-  'tiff',
-  'avif',
-  'heif',
-  'jxl'
-] as const
+type FileFormat =
+  | 'jpeg'
+  | 'png'
+  | 'webp'
+  | 'gif'
+  | 'jp2'
+  | 'tiff'
+  | 'avif'
+  | 'heif'
+  | 'jxl'
 
 interface FilePathQuery {
   w?: number
   h?: number
   q?: number
-  f?: (typeof FileFormat)[number]
+  f?: FileFormat
 }
 
 function objectToQueryString(obj: Record<string, number | string | undefined>) {

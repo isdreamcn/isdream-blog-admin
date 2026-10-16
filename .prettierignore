@@ -1,13 +1,16 @@
-/dist/*
+node_modules
+public
+dist
+
+src/assets/**/*.json
+
 .local
-pnpm-lock.yaml
 .output.js
-/node_modules/**
+pnpm-lock.yaml
+stats.html
+
+auto-imports.d.ts
+components.d.ts
 
 **/*.svg
 **/*.sh
-
-/public/*
-
-# lottie 动画等资源 JSON 不做格式化（单行展开成数万行 diff）
-src/assets/**/*.json

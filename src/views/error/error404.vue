@@ -51,11 +51,11 @@ const goBack = () => {
 
 <style scoped lang="scss">
 .error-404 {
-  height: 100%;
+  // 全屏页直接用视口高度，不依赖 #app 的高度链
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateY(-60px);
   .lottie-box {
     width: 600px;
     height: 600px;

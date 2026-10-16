@@ -3,18 +3,18 @@
     <MForm :fields="fields" @submit="search" @cancel="search"> </MForm>
 
     <MTable
+      v-model:is-reload="isReload"
+      v-model:select-keys="selectKeys"
       :columns="columns"
       :http="getLinkTypeList"
       :params="params"
-      v-model:isReload="isReload"
-      v-model:selectKeys="selectKeys"
     >
       <template #extra>
         <el-button type="primary" @click="edit(0)">新增</el-button>
         <MDeleteButton
           :http="linkTypeDel"
           :http-key="false"
-          :selectKeys="selectKeys"
+          :select-keys="selectKeys"
           @reload="clearSelectKeysReload"
         ></MDeleteButton>
       </template>
@@ -33,9 +33,9 @@
       v-model="formDialog.visible"
       v-bind="formDialog"
       :fields="dialogFields"
-      :httpAdd="linkTypeAdd"
-      :httpEdit="linkTypeEdit"
-      :httpGet="linkTypeDetails"
+      :http-add="linkTypeAdd"
+      :http-edit="linkTypeEdit"
+      :http-get="linkTypeDetails"
       @reload="reload"
     ></MFormDialog>
   </div>

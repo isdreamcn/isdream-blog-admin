@@ -1,6 +1,6 @@
 import type Editor from './editor.vue'
 import type { ExtractPropTypes } from 'vue'
-import { Editor as TinymceEditor, RawEditorSettings } from 'tinymce'
+import type { Editor as TinymceEditor, RawEditorSettings } from 'tinymce'
 import { buildProps, definePropType, isNil, isString } from '@/utils'
 import { toolbar, plugins } from './tinymce/tinymce'
 import { uploadMediaCommon } from '@/api/common'
@@ -46,7 +46,9 @@ export const editorProps = buildProps({
 export const editorEmits = {
   change: (content: string) => isString(content),
   'update:modelValue': (content: string) => isString(content),
-  inited: (editor: TinymceEditor) => editor instanceof TinymceEditor,
+  // 鸭子类型检查（TinymceEditor 仅为类型导出，不可用于 instanceof）
+  inited: (editor: TinymceEditor) =>
+    !!editor && typeof editor.getContent === 'function',
   'init-error': (err: any) => !isNil(err)
 }
 

@@ -3,18 +3,18 @@
     <MForm :fields="fields" @submit="search" @cancel="search"> </MForm>
 
     <MTable
+      v-model:is-reload="isReload"
+      v-model:select-keys="selectKeys"
       :columns="columns"
       :http="getArticleList"
       :params="params"
-      v-model:isReload="isReload"
-      v-model:selectKeys="selectKeys"
     >
       <template #extra>
         <el-button type="primary" @click="edit(0)">新增</el-button>
         <MDeleteButton
           :http="articleDel"
           :http-key="false"
-          :selectKeys="selectKeys"
+          :select-keys="selectKeys"
           @reload="clearSelectKeysReload"
         ></MDeleteButton>
       </template>
@@ -22,7 +22,7 @@
       <template #cover="{ value }">
         <MViewFile
           :src="filePathQuery(value?.url, { w: 100, f: 'webp' })"
-          :mimeType="value?.mimeType"
+          :mime-type="value?.mimeType"
         ></MViewFile>
       </template>
 

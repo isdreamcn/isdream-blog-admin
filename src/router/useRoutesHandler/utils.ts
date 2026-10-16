@@ -13,7 +13,7 @@ export const formatRoutes = (routes: RouteRecordRaw[]) => {
       ({
         ...route,
         children: route.children?.length ? route.children : undefined
-      } as RouteRecordRaw)
+      }) as RouteRecordRaw
   )
 }
 

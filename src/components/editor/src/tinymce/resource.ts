@@ -1,3 +1,5 @@
+// 确保 tinymce 主模块（设置 window.tinymce 全局）先于插件执行
+import 'tinymce'
 import 'tinymce/themes/silver'
 import 'tinymce/icons/default/icons'
 import 'tinymce/plugins/advlist'

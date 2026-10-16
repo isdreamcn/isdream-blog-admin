@@ -1,8 +1,8 @@
 <template>
   <el-dialog
-    class="m-form-dialog"
     v-bind="$attrs"
     v-model="visible"
+    class="m-form-dialog"
     :title="title"
     @close="cancel"
   >
@@ -13,7 +13,7 @@
       :inline="false"
       :col-attrs="24"
       :loading="loading"
-      @getForm="getForm"
+      @get-form="getForm"
       @submit="submit"
       @cancel="cancel"
     ></MForm>
@@ -38,8 +38,8 @@ const title = computed(() =>
   props.disabled
     ? props.disabledTitle
     : props.id
-    ? props.editTitle
-    : props.addTitle
+      ? props.editTitle
+      : props.addTitle
 )
 const loading = ref(false)
 const visible = ref(props.modelValue)

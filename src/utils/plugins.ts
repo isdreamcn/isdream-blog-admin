@@ -1,16 +1,11 @@
 export { warn, isVNode } from 'vue'
+
 export {
-  NOOP,
   isArray,
   isFunction,
-  isObject,
   isString,
   isDate,
-  isPromise,
   isSymbol,
-  hasOwn
-} from '@vue/shared'
-export {
   cloneDeep,
   clone,
   isNumber,
@@ -20,4 +15,24 @@ export {
   isNil,
   isBoolean,
   fromPairs
-} from 'lodash-unified'
+} from 'lodash-es'
+
+const hasOwnProperty = Object.prototype.hasOwnProperty
+export const hasOwn = (
+  val: object,
+  key: string | symbol
+): key is keyof typeof val => hasOwnProperty.call(val, key)
+
+export const NOOP = (): void => {}
+
+/** 判断是否为非 null 的对象（数组也算，函数不算） */
+export const isObject = (val: unknown): val is Record<any, any> =>
+  val !== null && typeof val === 'object'
+
+export const isPromise = <T = any>(val: unknown): val is Promise<T> => {
+  return (
+    isObject(val) &&
+    typeof (val as any).then === 'function' &&
+    typeof (val as any).catch === 'function'
+  )
+}

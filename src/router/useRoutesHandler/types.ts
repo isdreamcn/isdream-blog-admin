@@ -1,9 +1,9 @@
-import type { RouteRecordRaw, RouteRecordName } from 'vue-router'
+import type { RouteRecordRaw, RouteRecordNameGeneric } from 'vue-router'
 import type { UserMenu } from '@/store'
 
 export interface RoutesHandlerOptions {
   setupRoutes: boolean
-  addRouteParentName: RouteRecordName
+  addRouteParentName: NonNullable<RouteRecordNameGeneric>
   flatRoutes: boolean
 }
 

@@ -1,6 +1,7 @@
 // 自动导入
+// @see https://github.com/unplugin/unplugin-auto-import
 import AutoImport from 'unplugin-auto-import/vite'
-// TODO:https://github.com/antfu/unplugin-vue-components
+// @see https://github.com/antfu/unplugin-vue-components
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // import 手动导入的组件、自动其导入样式
@@ -10,7 +11,9 @@ export const useAutoImportComponents = (isBuild: boolean) => {
   return isBuild
     ? [
         AutoImport({
-          resolvers: [ElementPlusResolver()]
+          resolvers: [ElementPlusResolver()],
+          // global imports to register
+          imports: ['vue', 'vue-router']
         }),
         Components({
           dts: true,
@@ -37,5 +40,10 @@ export const useAutoImportComponents = (isBuild: boolean) => {
           useSource: true
         })
       ]
-    : []
+    : [
+        AutoImport({
+          // global imports to register
+          imports: ['vue', 'vue-router']
+        })
+      ]
 }

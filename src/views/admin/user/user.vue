@@ -2,18 +2,18 @@
   <div>
     <MForm :fields="fields" @submit="search" @cancel="search"> </MForm>
     <MTable
+      v-model:is-reload="isReload"
+      v-model:select-keys="selectKeys"
       :columns="columns"
       :http="getUserList"
       :params="params"
-      v-model:isReload="isReload"
-      v-model:selectKeys="selectKeys"
     >
       <template #extra>
         <el-button type="primary" @click="edit(0)">新增</el-button>
         <MDeleteButton
           :http="userDel"
           :http-key="false"
-          :selectKeys="selectKeys"
+          :select-keys="selectKeys"
           @reload="clearSelectKeysReload"
         ></MDeleteButton>
       </template>
@@ -40,7 +40,7 @@
           v-if="row.tempAvatar"
           pop
           type="primary"
-          popTitle="确认审核通过？"
+          pop-title="确认审核通过？"
           @click="setUserAvatar(row.id)"
           >审核头像</MA
         >
@@ -53,9 +53,9 @@
       v-model="formDialog.visible"
       v-bind="formDialog"
       :fields="dialogFields"
-      :httpAdd="userAdd"
-      :httpEdit="userEdit"
-      :httpGet="userDetails"
+      :http-add="userAdd"
+      :http-edit="userEdit"
+      :http-get="userDetails"
       @reload="reload"
     ></MFormDialog>
   </div>

@@ -1,4 +1,4 @@
-import type { ServiceInterceptors } from '../service'
+import type { ServiceInterceptors, ServiceError } from '../service'
 import { ElMessage } from 'element-plus'
 import { HttpStatusCode } from '@/constants'
 import { useUserStore } from '@/store'
@@ -9,6 +9,7 @@ const failAuth = () => {
 }
 interface FailHandler {
   message?: string
+  /** 命中该状态码时的自定义处理（如登录失效登出） */
   handler?: () => void
 }
 
@@ -23,10 +24,10 @@ const failCodeMap = new Map<HttpStatusCode, FailHandler>([
   ]
 ])
 
-const handleError = (code: number, message?: string) => {
+const handleError = (code: number, message?: string, skipMessage = false) => {
   const failHandler = failCodeMap.get(code)
   if (failHandler) {
-    if (message || failHandler.message) {
+    if (!skipMessage && (message || failHandler.message)) {
       ElMessage.error(message || failHandler.message)
     }
     if (failHandler.handler) {
@@ -37,23 +38,60 @@ const handleError = (code: number, message?: string) => {
   return false
 }
 
+/**
+ * 错误处理拦截器：
+ * - 业务响应 code 命中 failCodeMap 时提示并 reject（如 401 触发登出）
+ * - 请求异常时区分无响应（超时/断网）与 HTTP 错误，依次尝试业务 code、HTTP status 查表
+ * - 请求配置上可设 `_silentError: true` 跳过所有错误提示
+ */
 export const useHandleError = (): ServiceInterceptors => {
   return {
     responseInterceptor(res) {
-      const data = res.data
-      if (handleError(data.code, data.message)) {
-        return Promise.reject({
-          response: res
-        })
+      const { code, message } = res.data
+      if (handleError(code, message, res.config._silentError)) {
+        return Promise.reject({ code, message, response: res })
       }
       return res
     },
-    responseInterceptorCatch(err) {
-      handleError(err.response.data?.code, err.response.data?.message)
-      if (err.response.data?.code !== err.response.status) {
-        handleError(err.response.status)
+    responseInterceptorCatch(err): Promise<ServiceError> {
+      const skipMessage = err.config?._silentError
+
+      // 处理无响应的情况（网络错误、请求超时等）
+      if (!err.response) {
+        const message =
+          err.code === 'ECONNABORTED'
+            ? '请求超时，请稍后重试'
+            : err.message?.includes('Network Error')
+              ? '网络连接失败，请检查网络设置'
+              : `请求失败: ${err.message || '未知错误'}`
+        if (!skipMessage) {
+          ElMessage.error(message)
+        }
+        return Promise.reject({ message })
       }
-      return Promise.reject(err)
+
+      const { code, message } = (err.response.data || {}) as {
+        code?: number
+        message?: string
+      }
+
+      if (code !== undefined && handleError(code, message, skipMessage)) {
+        return Promise.reject({ code, message, response: err.response })
+      }
+      if (
+        code !== err.response.status &&
+        handleError(err.response.status, message, skipMessage)
+      ) {
+        return Promise.reject({
+          code: err.response.status,
+          message,
+          response: err.response
+        })
+      }
+      if (message && !skipMessage) {
+        ElMessage.error(message)
+      }
+      return Promise.reject({ code, message, response: err.response })
     }
   }
 }

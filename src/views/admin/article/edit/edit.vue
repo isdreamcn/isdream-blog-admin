@@ -8,8 +8,8 @@
     </template>
     <MForm
       :fields="fields"
-      :modelValue="modelValue"
-      :colAttrs="24"
+      :model-value="modelValue"
+      :col-attrs="24"
       :inline="false"
       :debounce="false"
       :loading="loading"

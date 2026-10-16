@@ -2,7 +2,7 @@ import type { ConfigEnv, UserConfig } from 'vite'
 import { loadEnv } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
-import { wrapperLoadViteEnv, dependenciesChunks } from './build/utils'
+import { wrapperLoadViteEnv } from './build/utils'
 import { createVitePlugins } from './build/vite/plugins'
 
 // https://vitejs.dev/config/
@@ -27,23 +27,40 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         : {}
     },
     build: {
-      chunkSizeWarningLimit: 5 * 1024,
-      rollupOptions: {
+      chunkSizeWarningLimit: 2 * 1024,
+      // 注意：tinymce 不设分包组（其插件裸读 window.tinymce 全局，
+      // codeSplitting 组会迫使入口静态依赖超大主模块并导致启动崩溃）
+      rolldownOptions: {
+        checks: {
+          ineffectiveDynamicImport: false,
+          pluginTimings: false
+        },
         output: {
           chunkFileNames: 'assets/js/[name]-[hash].js',
           entryFileNames: 'assets/js/[name]-[hash].js',
-          assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-          manualChunks: {
-            // 最小 ...dependenciesChunks(['vue'])
-            ...dependenciesChunks([
-              'vue',
-              'vue-router',
-              'pinia',
-              'animate.css',
-              'normalize.css',
-              'lodash-unified',
-              '@vue/shared'
-            ])
+          assetFileNames: 'assets/[ext]/[name]-[hash][extname]',
+          codeSplitting: {
+            groups: [
+              {
+                name: 'vue',
+                test: /node_modules[\\/](vue|vue-router|pinia|@vue)[\\/]/,
+                priority: 20
+              },
+              {
+                name: 'icon',
+                test: /node_modules.*@element-plus[\\/]icons-vue/,
+                priority: 19
+              },
+              { name: 'ui', test: /node_modules.*element-plus/, priority: 15 },
+              {
+                name: 'viewer',
+                test: /node_modules[\\/](v-viewer|viewerjs)[\\/]/,
+                priority: 15
+              },
+              { name: 'echarts', test: /node_modules.*echarts/, priority: 15 },
+              { name: 'vditor', test: /node_modules.*vditor/, priority: 15 },
+              { name: 'lottie', test: /node_modules.*lottie-web/, priority: 15 }
+            ]
           }
         }
       }
@@ -61,7 +78,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           additionalData: `
             @use "@/assets/styles/element.scss" as *;
             @use "@/assets/styles/variables.scss" as *;
-            @use "@/assets/styles/mxins.scss" as *;
+            @use "@/assets/styles/mixins.scss" as *;
           `
         }
       }

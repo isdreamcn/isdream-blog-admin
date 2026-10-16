@@ -1,6 +1,6 @@
 <template>
   <transition appear leave-active-class="animate__animated animate__zoomOut">
-    <div v-show="props.loading" class="m-loading" ref="loadingRef">
+    <div v-show="props.loading" ref="loadingRef" class="m-loading">
       <slot>Loading~</slot>
     </div>
   </transition>
@@ -27,7 +27,9 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .m-loading {
-  position: absolute;
+  // 全局 loading 铺满视口：fixed 保证不随 #app 滚动容器漂移，
+  // lottie 始终居中于当前视口而非文档中部
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;

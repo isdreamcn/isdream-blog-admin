@@ -2,24 +2,24 @@
   <div>
     <MForm
       :fields="fields"
-      :modelValue="params"
+      :model-value="params"
       @submit="search"
       @cancel="search"
     >
     </MForm>
 
     <MTable
+      v-model:is-reload="isReload"
+      v-model:select-keys="selectKeys"
       :columns="columns"
       :http="getCommentList"
       :params="params"
-      v-model:isReload="isReload"
-      v-model:selectKeys="selectKeys"
     >
       <template #extra>
         <MDeleteButton
           :http="CommentDel"
           :http-key="false"
-          :selectKeys="selectKeys"
+          :select-keys="selectKeys"
           @reload="clearSelectKeysReload"
         ></MDeleteButton>
       </template>

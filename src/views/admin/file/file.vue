@@ -11,18 +11,18 @@
     ></el-alert>
 
     <MTable
+      v-model:is-reload="isReload"
+      v-model:select-keys="selectKeys"
       :columns="columns"
       :http="getFileList"
       :params="params"
-      v-model:isReload="isReload"
-      v-model:selectKeys="selectKeys"
     >
       <template #extra>
         <el-button type="primary" @click="edit(0)">上传文件</el-button>
         <MDeleteButton
           :http="fileDel"
           :http-key="false"
-          :selectKeys="selectKeys"
+          :select-keys="selectKeys"
           @reload="clearSelectKeysReload"
         ></MDeleteButton>
       </template>
@@ -30,7 +30,7 @@
       <template #url="{ value, row }">
         <MViewFile
           :src="filePathQuery(value, { w: 100, f: 'webp' })"
-          :mimeType="row?.mimeType"
+          :mime-type="row?.mimeType"
         ></MViewFile>
       </template>
 

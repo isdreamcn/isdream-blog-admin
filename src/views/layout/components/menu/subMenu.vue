@@ -1,5 +1,5 @@
 <template>
-  <template v-for="item in props.menu" :key="item.name">
+  <template v-for="item in props.menu" :key="item.path">
     <el-sub-menu
       v-if="Array.isArray(item.children) && item.children.length"
       :index="item.path"

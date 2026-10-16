@@ -6,12 +6,12 @@
       </el-space>
     </div>
     <el-table
-      class="m-table__main"
-      border
-      stripe
       v-bind="$attrs"
       :ref="selection.elTableRef"
       v-loading="props.loading || httpRes.loading"
+      class="m-table__main"
+      border
+      stripe
       :data="data"
       :row-key="props.rowKey"
       @selection-change="selection.handleSelectionChange"
@@ -22,10 +22,10 @@
 
       <template v-if="props.series">
         <el-table-column
+          v-slot="{ $index }"
           type="index"
           width="55"
           label="序号"
-          #default="{ $index }"
         >
           {{ indexStart + $index + 1 }}
         </el-table-column>
@@ -61,7 +61,7 @@
     <!-- 分页器 -->
     <div v-if="props.paginationConfig" class="m-table__pagination">
       <el-pagination
-        v-model:currentPage="paginationParams.currentPage"
+        v-model:current-page="paginationParams.currentPage"
         v-model:page-size="paginationParams.pageSize"
         :page-sizes="props.paginationConfig.pageSizes"
         layout="total, sizes, prev, pager, next, jumper"
@@ -99,7 +99,7 @@ const handleSizeChange = () => {
 }
 
 // table 实际渲染的数据
-const data = computed(() => httpRes.data || paginationData.value)
+const data = computed(() => (httpRes.data || paginationData.value) as any[])
 
 // selectkey
 const selection = useSelection(props, data, (selectKeys) => {
